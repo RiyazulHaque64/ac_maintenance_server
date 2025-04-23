@@ -173,6 +173,7 @@ const forgotPassword = async (payload: TForgotPasswordPayload) => {
       },
       data: {
         password: hashedPassword,
+        password_changed_at: new Date(),
       },
       select: {
         ...userSelectedFields,

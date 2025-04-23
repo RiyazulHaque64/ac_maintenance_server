@@ -4,7 +4,7 @@ declare namespace NodeJS {
     DATABASE_URL: string;
     NODE_ENV: "development" | "production";
     APP_NAME: string;
-    DREAMESTATE_EMAIL: string;
+    EMAIL: string;
     SUPER_ADMIN_F_NAME: string;
     SUPER_ADMIN_L_NAME: string;
     SUPER_ADMIN_PASSWORD: string;

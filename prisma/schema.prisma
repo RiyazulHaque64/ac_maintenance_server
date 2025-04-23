@@ -27,48 +27,10 @@ model User {
   password_changed_at DateTime   @default(now())
   created_at          DateTime   @default(now())
   updated_at          DateTime   @updatedAt
-  Property            Property[]
   Blog                Blog[]
   File                File[]
 
   @@map("users")
-}
-
-model Property {
-  id               String         @id @default(uuid())
-  user_id          String?
-  title            String
-  slug             String
-  description      String?
-  price            Float
-  feature_image    String?
-  property_type    PropertyType?
-  status           PropertyStatus @default(AVAILABLE)
-  images           String[]       @default([])
-  documents        String[]       @default([])
-  property_details Json?
-  location         Json?
-  contact_info_id  String?
-  created_at       DateTime       @default(now())
-  updated_at       DateTime       @updatedAt
-  featured         Boolean        @default(false)
-
-  uploaded_by  User?        @relation(fields: [user_id], references: [id])
-  contact_info ContactInfo? @relation(fields: [contact_info_id], references: [id])
-  tags         Tag[]        @relation("PropertyTag")
-  features     Feature[]    @relation("PropertyFeature")
-
-  @@map("properties")
-}
-
-model ContactInfo {
-  id       String     @id @default(uuid())
-  name     String
-  email    String     @unique
-  phone    String?
-  Property Property[]
-
-  @@map("contact_info")
 }
 
 model Blog {
@@ -90,6 +52,24 @@ model Blog {
   @@map("blogs")
 }
 
+model Service {
+  id                String   @id @default(uuid())
+  title             String
+  icon              String
+  short_description String?
+  full_description  String?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("services")
+}
+
+model Gallery {
+  id      String @id @default(uuid())
+  section String
+  files   File[] @relation("GalleryImages")
+}
+
 model FeatureGroup {
   id         String    @id @default(uuid())
   name       String
@@ -108,7 +88,6 @@ model Feature {
   updated_at       DateTime @updatedAt
 
   feature_group FeatureGroup @relation(fields: [feature_group_id], references: [id])
-  properties    Property[]   @relation("PropertyFeature")
 
   @@map("features")
 }
@@ -119,8 +98,7 @@ model Tag {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  properties Property[] @relation("PropertyTag")
-  blogs      Blog[]     @relation("BlogTag")
+  blogs Blog[] @relation("BlogTag")
 
   @@map("tags")
 }
@@ -139,7 +117,9 @@ model File {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  uploaded_by User @relation(fields: [user_id], references: [id])
+  uploaded_by User     @relation(fields: [user_id], references: [id])
+  galleryId   String?
+  gallery     Gallery? @relation("GalleryImages", fields: [galleryId], references: [id])
 
   @@map("files")
 }
@@ -163,23 +143,4 @@ enum UserRole {
   SUPER_ADMIN
   ADMIN
   USER
-}
-
-enum PostingStatus {
-  POSTED
-  NOT_POSTED
-}
-
-enum PropertyType {
-  APARTMENT
-  HOUSE
-  VILLA
-  LAND
-}
-
-enum PropertyStatus {
-  AVAILABLE
-  SOLD
-  RENTED
-  UPCOMING
 }

@@ -6,13 +6,13 @@ const sendEmail = async (receiverEmail: string, html: string) => {
     port: 587,
     secure: false,
     auth: {
-      user: config.dreamestate_email,
+      user: config.email,
       pass: config.email_app_pass,
     },
   });
 
   const info = await transporter.sendMail({
-    from: `${config.app_name} <${config.dreamestate_email}>`,
+    from: `${config.app_name} <${config.email}>`,
     to: receiverEmail,
     subject: `${config.app_name}- Password Reset OTP`,
     html,

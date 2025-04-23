@@ -11,7 +11,7 @@ export default {
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
   jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
   jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
-  dreamestate_email: process.env.DREAMESTATE_EMAIL,
+  email: process.env.EMAIL,
   super_admin_f_name: process.env.SUPER_ADMIN_F_NAME,
   super_admin_l_name: process.env.SUPER_ADMIN_L_NAME,
   super_admin_password: process.env.SUPER_ADMIN_PASSWORD,

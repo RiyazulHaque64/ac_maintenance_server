@@ -6,6 +6,7 @@ import notFoundHandler from "./app/middlewares/notFoundHandler";
 import router from "./app/routes";
 import SwaggerRoutes from "./app/routes/swagger.routes";
 import configureCors from "./app/utils/configureCors";
+import config from "./app/config";
 
 const app: Application = express();
 
@@ -18,7 +19,7 @@ app.use(cors(configureCors));
 app.get("/", (req, res) => {
   res.status(httpStatus.OK).json({
     success: true,
-    message: "Dreamestate` server is working fine",
+    message: `${config.app_name} server is working fine`,
   });
 });
 
