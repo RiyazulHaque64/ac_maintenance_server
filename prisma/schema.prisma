@@ -1,0 +1,185 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String     @id @default(uuid())
+  first_name          String
+  last_name           String?
+  email               String     @unique
+  password            String
+  contact_number      String?
+  profile_pic         String?
+  status              UserStatus @default(ACTIVE)
+  role                UserRole   @default(USER)
+  is_deleted          Boolean    @default(false)
+  password_changed_at DateTime   @default(now())
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @updatedAt
+  Property            Property[]
+  Blog                Blog[]
+  File                File[]
+
+  @@map("users")
+}
+
+model Property {
+  id               String         @id @default(uuid())
+  user_id          String?
+  title            String
+  slug             String
+  description      String?
+  price            Float
+  feature_image    String?
+  property_type    PropertyType?
+  status           PropertyStatus @default(AVAILABLE)
+  images           String[]       @default([])
+  documents        String[]       @default([])
+  property_details Json?
+  location         Json?
+  contact_info_id  String?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  featured         Boolean        @default(false)
+
+  uploaded_by  User?        @relation(fields: [user_id], references: [id])
+  contact_info ContactInfo? @relation(fields: [contact_info_id], references: [id])
+  tags         Tag[]        @relation("PropertyTag")
+  features     Feature[]    @relation("PropertyFeature")
+
+  @@map("properties")
+}
+
+model ContactInfo {
+  id       String     @id @default(uuid())
+  name     String
+  email    String     @unique
+  phone    String?
+  Property Property[]
+
+  @@map("contact_info")
+}
+
+model Blog {
+  id         String   @id @default(uuid())
+  title      String
+  slug       String   @unique
+  content    String
+  thumbnail  String?
+  images     String[] @default([])
+  author_id  String
+  published  Boolean  @default(true)
+  featured   Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  tags   Tag[] @relation("BlogTag")
+  author User  @relation(fields: [author_id], references: [id])
+
+  @@map("blogs")
+}
+
+model FeatureGroup {
+  id         String    @id @default(uuid())
+  name       String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  feature    Feature[]
+
+  @@map("feature_groups")
+}
+
+model Feature {
+  id               String   @id @default(uuid())
+  name             String
+  feature_group_id String
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  feature_group FeatureGroup @relation(fields: [feature_group_id], references: [id])
+  properties    Property[]   @relation("PropertyFeature")
+
+  @@map("features")
+}
+
+model Tag {
+  id         String   @id @default(uuid())
+  name       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  properties Property[] @relation("PropertyTag")
+  blogs      Blog[]     @relation("BlogTag")
+
+  @@map("tags")
+}
+
+model File {
+  id         String   @id @default(uuid())
+  name       String
+  alt_text   String
+  type       String
+  size       Int
+  width      Int
+  height     Int
+  path       String
+  bucket_id  String
+  user_id    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  uploaded_by User @relation(fields: [user_id], references: [id])
+
+  @@map("files")
+}
+
+model OTP {
+  id         String   @id @default(uuid())
+  email      String
+  otp        Int      @unique
+  expires_at String
+  created_at DateTime @default(now())
+
+  @@map("otp")
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum PostingStatus {
+  POSTED
+  NOT_POSTED
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  VILLA
+  LAND
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  RENTED
+  UPCOMING
+}
