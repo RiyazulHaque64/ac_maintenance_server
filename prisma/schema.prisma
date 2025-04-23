@@ -55,6 +55,7 @@ model Blog {
 model Service {
   id                String   @id @default(uuid())
   title             String
+  slug              String
   icon              String
   short_description String?
   full_description  String?
