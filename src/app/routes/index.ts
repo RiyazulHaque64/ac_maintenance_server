@@ -5,6 +5,7 @@ import { FeatureRoutes } from "../module/Feature/Feature.routes";
 import { FileRoutes } from "../module/File/File.routes";
 import { UserRoutes } from "../module/User/User.routes";
 import { UtilityRoutes } from "../module/Utility/Utility.routes";
+import { ServiceRoutes } from "../module/Service/Service.routes";
 
 const router = Router();
 
@@ -20,6 +21,10 @@ const routes = [
   {
     path: "/blog",
     route: BlogRoutes,
+  },
+  {
+    path: "/service",
+    route: ServiceRoutes,
   },
   {
     path: "/file",

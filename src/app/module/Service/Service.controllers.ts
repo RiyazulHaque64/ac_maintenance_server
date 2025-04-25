@@ -30,17 +30,15 @@ const getServices = catchAsync(
   }
 );
 
-const getSingleService = catchAsync(
-  async (req: Request & { user?: TAuthUser }, res, next) => {
-    const result = await ServiceServices.getSingleService(req.params.id);
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Service retrieved successfully",
-      data: result,
-    });
-  }
-);
+const getSingleService = catchAsync(async (req, res, next) => {
+  const result = await ServiceServices.getSingleService(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Service retrieved successfully",
+    data: result,
+  });
+});
 
 const updateService = catchAsync(
   async (req: Request & { user?: TAuthUser }, res, next) => {
@@ -66,7 +64,7 @@ const deleteService = catchAsync(
   }
 );
 
-export const BlogControllers = {
+export const ServiceControllers = {
   createService,
   getServices,
   getSingleService,
