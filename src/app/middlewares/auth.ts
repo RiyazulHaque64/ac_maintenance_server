@@ -14,7 +14,9 @@ const auth = (...roles: string[]) => {
     next: NextFunction
   ) => {
     try {
-      const token = req.headers.authorization;
+      // const token = req.headers.authorization;
+      const token = req.cookies.token;
+
       if (!token) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized");
       }
@@ -46,7 +48,11 @@ const auth = (...roles: string[]) => {
         );
       }
 
-      if (verifiedUser && roles?.length && !roles.includes(verifiedUser?.role)) {
+      if (
+        verifiedUser &&
+        roles?.length &&
+        !roles.includes(verifiedUser?.role)
+      ) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized");
       }
 

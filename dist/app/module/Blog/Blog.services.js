@@ -32,19 +32,20 @@ const pagination_1 = __importDefault(require("../../utils/pagination"));
 const User_constants_1 = require("../User/User.constants");
 const Blog_constants_1 = require("./Blog.constants");
 const createPost = (user, data) => __awaiter(void 0, void 0, void 0, function* () {
-    const tags = data.tags.filter((t) => common_1.uuidRegex.test(t));
-    if (data.tags.length !== tags.length) {
+    var _a, _b;
+    const tags = ((_a = data === null || data === void 0 ? void 0 : data.tags) === null || _a === void 0 ? void 0 : _a.filter((t) => common_1.uuidRegex.test(t))) || [];
+    if (data.tags && ((_b = data.tags) === null || _b === void 0 ? void 0 : _b.length) !== (tags === null || tags === void 0 ? void 0 : tags.length)) {
         const newTags = data.tags.filter((t) => !common_1.uuidRegex.test(t));
         if (newTags.length) {
             yield prisma_1.default.tag.createMany({
-                data: newTags.map((t) => ({ name: t }))
+                data: newTags.map((t) => ({ name: t })),
             });
             const addedTags = yield prisma_1.default.tag.findMany({
                 where: {
                     name: {
-                        in: newTags
-                    }
-                }
+                        in: newTags,
+                    },
+                },
             });
             addedTags.forEach((newTag) => tags.push(newTag.id));
         }
@@ -52,16 +53,16 @@ const createPost = (user, data) => __awaiter(void 0, void 0, void 0, function* (
     let slug = (0, generateSlug_1.generateSlug)(data.title);
     const isExist = yield prisma_1.default.blog.findFirst({
         where: {
-            slug
-        }
+            slug,
+        },
     });
     if (isExist) {
         slug = `${slug}-${Date.now()}`;
     }
     const result = yield prisma_1.default.blog.create({
         data: Object.assign(Object.assign({}, data), { slug, author_id: user.id, tags: {
-                connect: tags.map((t) => ({ id: t }))
-            } })
+                connect: tags.map((t) => ({ id: t })),
+            } }),
     });
     return result;
 });
@@ -90,7 +91,7 @@ const getPosts = (query) => __awaiter(void 0, void 0, void 0, function* () {
         });
     if (featured) {
         andConditions.push({
-            featured: Boolean(featured)
+            featured: Boolean(featured),
         });
     }
     if (searchTerm) {
@@ -115,12 +116,12 @@ const getPosts = (query) => __awaiter(void 0, void 0, void 0, function* () {
         },
         include: {
             author: {
-                select: Object.assign({}, User_constants_1.userSelectedFields)
+                select: Object.assign({}, User_constants_1.userSelectedFields),
             },
-            tags: true
-        }
+            tags: true,
+        },
     });
-    const formattedResult = result.map((item) => (Object.assign(Object.assign({}, item), { tags: item.tags.map(tag => tag.name) })));
+    const formattedResult = result.map((item) => (Object.assign(Object.assign({}, item), { tags: item.tags.map((tag) => tag.name) })));
     const total = yield prisma_1.default.blog.count({ where: whereConditons });
     return {
         meta: {
@@ -132,16 +133,16 @@ const getPosts = (query) => __awaiter(void 0, void 0, void 0, function* () {
     };
 });
 const getSinglePost = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _c;
     const result = yield prisma_1.default.blog.findUniqueOrThrow({
         where: {
-            id
+            id,
         },
         include: {
-            tags: true
-        }
+            tags: true,
+        },
     });
-    const formattedResult = Object.assign(Object.assign({}, result), { tags: (_a = result.tags) === null || _a === void 0 ? void 0 : _a.map(tag => tag.id) });
+    const formattedResult = Object.assign(Object.assign({}, result), { tags: (_c = result.tags) === null || _c === void 0 ? void 0 : _c.map((tag) => tag.id) });
     return formattedResult;
 });
 const updatePost = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -151,14 +152,14 @@ const updatePost = (id, payload) => __awaiter(void 0, void 0, void 0, function* 
         const newTags = inputTags.filter((t) => !common_1.uuidRegex.test(t));
         if (newTags.length) {
             yield prisma_1.default.tag.createMany({
-                data: newTags.map((t) => ({ name: t }))
+                data: newTags.map((t) => ({ name: t })),
             });
             const addedTags = yield prisma_1.default.tag.findMany({
                 where: {
                     name: {
-                        in: newTags
-                    }
-                }
+                        in: newTags,
+                    },
+                },
             });
             addedTags.forEach((newTag) => tags.push(newTag.id));
         }
@@ -167,8 +168,8 @@ const updatePost = (id, payload) => __awaiter(void 0, void 0, void 0, function* 
         let slug = (0, generateSlug_1.generateSlug)(payload.title);
         const isExist = yield prisma_1.default.blog.findFirst({
             where: {
-                slug
-            }
+                slug,
+            },
         });
         if (isExist) {
             slug = `${slug}-${Date.now()}`;
@@ -179,31 +180,32 @@ const updatePost = (id, payload) => __awaiter(void 0, void 0, void 0, function* 
         where: {
             id,
         },
-        data: Object.assign(Object.assign({}, rest), (tags && tags.length > 0) && {
+        data: Object.assign(Object.assign({}, rest), (tags &&
+            tags.length > 0 && {
             tags: {
-                set: tags.map((tagId) => ({ id: tagId }))
-            }
-        }),
+                set: tags.map((tagId) => ({ id: tagId })),
+            },
+        })),
         include: {
             author: {
-                select: Object.assign({}, User_constants_1.userSelectedFields)
+                select: Object.assign({}, User_constants_1.userSelectedFields),
             },
-            tags: true
-        }
+            tags: true,
+        },
     });
     return result;
 });
-const deletePosts = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ids }) {
+const deletePosts = ({ ids }) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.blog.deleteMany({
         where: {
             id: {
-                in: ids
-            }
-        }
+                in: ids,
+            },
+        },
     });
     return {
         deleted_count: result.count,
-        message: `${result.count} post deleted successfully`
+        message: `${result.count} post deleted successfully`,
     };
 });
 exports.BlogServices = {
@@ -211,5 +213,5 @@ exports.BlogServices = {
     getPosts,
     updatePost,
     deletePosts,
-    getSinglePost
+    getSinglePost,
 };

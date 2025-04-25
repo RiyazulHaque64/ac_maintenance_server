@@ -124,6 +124,7 @@ const resetPassword = async (
     payload.new_password,
     Number(config.salt_rounds)
   );
+
   const result = await prisma.user.update({
     where: {
       id: userInfo.id,
@@ -134,8 +135,26 @@ const resetPassword = async (
     },
     select: {
       ...userSelectedFields,
+      password_changed_at: true,
     },
   });
+
+  const passwordChangedTime = Math.floor(
+    new Date(result.password_changed_at).getTime() / 1000
+  );
+
+  const jwtPayload = {
+    id: result.id,
+    email: result.email,
+    role: result.role,
+    password_changed_at: passwordChangedTime,
+  };
+
+  const accessToken = generateToken(
+    jwtPayload,
+    config.jwt_access_secret,
+    config.jwt_access_expires_in
+  );
 
   return {
     id: result.id,
@@ -144,6 +163,7 @@ const resetPassword = async (
     contact_number: result.contact_number,
     profile_pic: result.profile_pic,
     role: result.role,
+    token: accessToken,
   };
 };
 

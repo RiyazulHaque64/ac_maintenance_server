@@ -7,6 +7,7 @@ import router from "./app/routes";
 import SwaggerRoutes from "./app/routes/swagger.routes";
 import configureCors from "./app/utils/configureCors";
 import config from "./app/config";
+import cookieParser from "cookie-parser";
 
 const app: Application = express();
 
@@ -14,6 +15,7 @@ const app: Application = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(configureCors));
+app.use(cookieParser());
 
 // test server
 app.get("/", (req, res) => {

@@ -12,33 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UtilityServices = void 0;
+exports.ServiceServices = void 0;
 const common_1 = require("../../constants/common");
 const prisma_1 = __importDefault(require("../../shared/prisma"));
 const fieldValidityChecker_1 = __importDefault(require("../../utils/fieldValidityChecker"));
+const generateSlug_1 = require("../../utils/generateSlug");
 const pagination_1 = __importDefault(require("../../utils/pagination"));
-const getUtilities = () => __awaiter(void 0, void 0, void 0, function* () {
-    const tags = yield prisma_1.default.tag.findMany();
-    const featureGroups = yield prisma_1.default.featureGroup.findMany({
-        include: {
-            feature: true
-        }
+const Service_constants_1 = require("./Service.constants");
+const createService = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    let slug = (0, generateSlug_1.generateSlug)(data.title);
+    const isExist = yield prisma_1.default.service.findFirst({
+        where: {
+            slug,
+        },
     });
-    return {
-        tags,
-        feature_groups: featureGroups
-    };
-});
-const addTag = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.tag.create({
-        data
+    if (isExist) {
+        slug = `${slug}-${Date.now()}`;
+    }
+    const result = yield prisma_1.default.service.create({
+        data: Object.assign(Object.assign({}, data), { slug }),
     });
     return result;
 });
-const getTags = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchTerm, page, limit, sortBy, sortOrder, id } = query;
+const getServices = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const { searchTerm, page, limit, sortBy, sortOrder, id, slug } = query;
     if (sortBy) {
-        (0, fieldValidityChecker_1.default)(["name"], sortBy);
+        (0, fieldValidityChecker_1.default)(Service_constants_1.serviceSortableFields, sortBy);
     }
     if (sortOrder) {
         (0, fieldValidityChecker_1.default)(common_1.sortOrderType, sortOrder);
@@ -54,9 +53,13 @@ const getTags = (query) => __awaiter(void 0, void 0, void 0, function* () {
         andConditions.push({
             id,
         });
+    if (slug)
+        andConditions.push({
+            slug,
+        });
     if (searchTerm) {
         andConditions.push({
-            OR: ["name"].map((field) => ({
+            OR: Service_constants_1.serviceSearchableFields.map((field) => ({
                 [field]: {
                     contains: searchTerm,
                     mode: "insensitive",
@@ -67,15 +70,15 @@ const getTags = (query) => __awaiter(void 0, void 0, void 0, function* () {
     const whereConditons = {
         AND: andConditions,
     };
-    const result = yield prisma_1.default.tag.findMany({
+    const result = yield prisma_1.default.service.findMany({
         where: whereConditons,
         skip,
         take: limitNumber,
         orderBy: {
             [sortWith]: sortSequence,
-        }
+        },
     });
-    const total = yield prisma_1.default.tag.count({ where: whereConditons });
+    const total = yield prisma_1.default.service.count({ where: whereConditons });
     return {
         meta: {
             page: pageNumber,
@@ -85,32 +88,52 @@ const getTags = (query) => __awaiter(void 0, void 0, void 0, function* () {
         data: result,
     };
 });
-const updateTag = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.tag.update({
+const getSingleService = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.service.findUniqueOrThrow({
         where: {
-            id
+            id,
         },
-        data: payload
     });
     return result;
 });
-const deleteTags = ({ ids }) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.tag.deleteMany({
+const updateService = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    if (payload.title) {
+        let slug = (0, generateSlug_1.generateSlug)(payload.title);
+        const isExist = yield prisma_1.default.service.findFirst({
+            where: {
+                slug,
+            },
+        });
+        if (isExist) {
+            slug = `${slug}-${Date.now()}`;
+        }
+        payload.slug = slug;
+    }
+    const result = yield prisma_1.default.service.update({
+        where: {
+            id,
+        },
+        data: Object.assign({}, payload),
+    });
+    return result;
+});
+const deleteServices = ({ ids }) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma_1.default.service.deleteMany({
         where: {
             id: {
-                in: ids
-            }
-        }
+                in: ids,
+            },
+        },
     });
     return {
         deleted_count: result.count,
-        message: `${result.count} tags deleted successfully`
+        message: `${result.count} service deleted successfully`,
     };
 });
-exports.UtilityServices = {
-    addTag,
-    getTags,
-    updateTag,
-    deleteTags,
-    getUtilities
+exports.ServiceServices = {
+    createService,
+    getServices,
+    getSingleService,
+    updateService,
+    deleteServices,
 };

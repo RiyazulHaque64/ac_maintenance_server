@@ -131,6 +131,7 @@ const forgotPassword = (payload) => __awaiter(void 0, void 0, void 0, function* 
             },
             data: {
                 password: hashedPassword,
+                password_changed_at: new Date(),
             },
             select: Object.assign({}, User_constants_1.userSelectedFields),
         });

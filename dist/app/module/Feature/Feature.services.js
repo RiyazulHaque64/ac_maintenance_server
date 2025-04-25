@@ -85,7 +85,7 @@ const updateFeature = (id, payload) => __awaiter(void 0, void 0, void 0, functio
     });
     return result;
 });
-const deleteFeatures = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ids }) {
+const deleteFeatures = ({ ids }) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.feature.deleteMany({
         where: {
             id: {
