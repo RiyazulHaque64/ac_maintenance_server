@@ -28,8 +28,7 @@ const createUser = async (req: Request) => {
   );
 
   const new_user: TNewUser = {
-    first_name: data.first_name,
-    last_name: data.last_name || null,
+    name: data.name,
     email: data.email,
     password: hashedPassword,
     contact_number: data.contact_number || null,
@@ -94,7 +93,7 @@ const login = async (credential: TLoginCredential) => {
 
   return {
     id: user.id,
-    name: `${user.first_name} ${user.last_name}`,
+    name: user.name,
     email: user.email,
     contact_number: user.contact_number,
     profile_pic: user.profile_pic,
@@ -158,7 +157,7 @@ const resetPassword = async (
 
   return {
     id: result.id,
-    name: `${result.first_name} ${result.last_name}`,
+    name: result.name,
     email: result.email,
     contact_number: result.contact_number,
     profile_pic: result.profile_pic,
@@ -205,7 +204,7 @@ const forgotPassword = async (payload: TForgotPasswordPayload) => {
       message: "Password updated successfully",
       data: {
         id: result.id,
-        name: `${result.first_name} ${result.last_name}`,
+        name: result.name,
         email: result.email,
         contact_number: result.contact_number,
         profile_pic: result.profile_pic,

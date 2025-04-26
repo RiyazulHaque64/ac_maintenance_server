@@ -4,8 +4,7 @@ import prisma from "../shared/prisma";
 import bcrypt from "bcrypt";
 
 const superAdmin = {
-  first_name: config.super_admin_f_name,
-  last_name: config.super_admin_l_name,
+  name: config.super_admin_name,
   email: config.email,
   role: UserRole.SUPER_ADMIN,
 };

@@ -5,8 +5,7 @@ declare namespace NodeJS {
     NODE_ENV: "development" | "production";
     APP_NAME: string;
     EMAIL: string;
-    SUPER_ADMIN_F_NAME: string;
-    SUPER_ADMIN_L_NAME: string;
+    SUPER_ADMIN_NAME: string;
     SUPER_ADMIN_PASSWORD: string;
     PASSWORD_SALT_ROUNDS: number;
     JWT_ACCESS_SECRET: string;

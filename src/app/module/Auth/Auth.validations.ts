@@ -4,15 +4,12 @@ import { z } from "zod";
 const createUserValidationSchema = z.object({
   body: z
     .object({
-      first_name: z
-        .string({ invalid_type_error: "First name should be a text" })
-        .min(1, { message: "First name must be at least 1 characters long" })
+      name: z
+        .string({ invalid_type_error: "Name should be a text" })
+        .min(1, { message: "Name must be at least 1 characters long" })
         .max(100, {
-          message: "First name must be at most 100 characters long",
+          message: "Name must be at most 50 characters long",
         }),
-      last_name: z
-        .string({ invalid_type_error: "Last name should be a text" })
-        .optional(),
       email: z.string().email({ message: "Invalid email address" }),
       password: z
         .string({

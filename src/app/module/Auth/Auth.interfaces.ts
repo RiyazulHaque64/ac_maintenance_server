@@ -1,8 +1,7 @@
 import { UserRole } from "@prisma/client";
 
 export type TCreateUserPayload = {
-  first_name: string;
-  last_name: string;
+  name: string;
   email: string;
   password: string;
   contact_number: string;
@@ -10,8 +9,7 @@ export type TCreateUserPayload = {
 };
 
 export type TNewUser = {
-  first_name: string;
-  last_name: string | null;
+  name: string;
   email: string;
   password: string;
   contact_number: string | null;
