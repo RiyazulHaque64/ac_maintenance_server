@@ -27,7 +27,6 @@ const login = catchAsync(async (req, res, next) => {
     message: "User logged in successfully",
     data: {
       ...result,
-      token,
     },
   });
 });
@@ -48,7 +47,6 @@ const resetPassword = catchAsync(
       message: "Password reset successfully",
       data: {
         ...rest,
-        token,
       },
     });
   }
