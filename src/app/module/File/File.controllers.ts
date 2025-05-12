@@ -5,39 +5,45 @@ import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { FileServices } from "./File.services";
 
-const filesUpload = catchAsync(async (req: Request & { user?: TAuthUser }, res, next) => {
+const filesUpload = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res, next) => {
     const result = await FileServices.filesUpload(req);
     sendResponse(res, {
-        statusCode: httpStatus.CREATED,
-        success: true,
-        message: "Files uploaded successfully",
-        data: result,
+      statusCode: httpStatus.CREATED,
+      success: true,
+      message: "Files uploaded successfully",
+      data: result,
     });
-});
+  }
+);
 
-const getFiles = catchAsync(async (req: Request & { user?: TAuthUser }, res, next) => {
+const getFiles = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res, next) => {
     const result = await FileServices.getFiles(req.query);
     sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Files retrieved successfully",
-        data: result,
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Files retrieved successfully",
+      meta: result.meta,
+      data: result.data,
     });
-});
+  }
+);
 
-const deleteFiles = catchAsync(async (req: Request & { user?: TAuthUser }, res, next) => {
+const deleteFiles = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res, next) => {
     const result = await FileServices.deleteFiles(req.body);
     sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Files deleted successfully",
-        data: result,
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Files deleted successfully",
+      data: result,
     });
-});
-
+  }
+);
 
 export const FileControllers = {
-    filesUpload,
-    getFiles,
-    deleteFiles
-}
+  filesUpload,
+  getFiles,
+  deleteFiles,
+};
