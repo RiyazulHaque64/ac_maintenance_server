@@ -39,21 +39,28 @@ const createUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
 }));
 const login = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const _a = yield Auth_services_1.AuthServices.login(req.body), { token } = _a, result = __rest(_a, ["token"]);
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
         message: "User logged in successfully",
-        data: Object.assign(Object.assign({}, result), { token }),
+        data: Object.assign({}, result),
     });
 }));
 const resetPassword = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Auth_services_1.AuthServices.resetPassword(req.user, req.body);
+    const _b = yield Auth_services_1.AuthServices.resetPassword(req.user, req.body), { token } = _b, rest = __rest(_b, ["token"]);
+    res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
         message: "Password reset successfully",
-        data: result,
+        data: Object.assign({}, rest),
     });
 }));
 const forgotPassword = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,9 +72,24 @@ const forgotPassword = (0, catchAsync_1.default)((req, res, next) => __awaiter(v
         data: result === null || result === void 0 ? void 0 : result.data,
     });
 }));
+const logout = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+    });
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: "User logged out successfully",
+        data: null,
+    });
+}));
 exports.AuthControllers = {
     createUser,
     login,
     resetPassword,
     forgotPassword,
+    logout,
 };

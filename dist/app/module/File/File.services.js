@@ -38,7 +38,7 @@ const filesUpload = (req) => __awaiter(void 0, void 0, void 0, function* () {
             const name = `${Date.now()}-${file.originalname}`;
             const metadata = yield (0, sharp_1.default)(file.buffer).metadata();
             const { data } = yield supabase_1.default.storage
-                .from('general')
+                .from("general")
                 .upload(name, file.buffer, {
                 contentType: file.mimetype,
             });
@@ -66,13 +66,13 @@ const filesUpload = (req) => __awaiter(void 0, void 0, void 0, function* () {
         const files = yield prisma_1.default.file.findMany({
             where: {
                 path: {
-                    in: uploaded_files
-                }
+                    in: uploaded_files,
+                },
             },
             select: {
                 name: true,
-                path: true
-            }
+                path: true,
+            },
         });
         return files;
     }));
@@ -90,7 +90,9 @@ const getFiles = (query) => __awaiter(void 0, void 0, void 0, function* () {
         sortBy,
         sortOrder,
     });
-    const andConditions = [{ path: { contains: "general" } }];
+    const andConditions = [
+        { path: { contains: "general" } },
+    ];
     if (searchTerm) {
         andConditions.push({
             OR: File_constants_1.fileSearchableFields.map((field) => {
@@ -118,8 +120,7 @@ const getFiles = (query) => __awaiter(void 0, void 0, void 0, function* () {
                 uploaded_by: {
                     select: {
                         id: true,
-                        first_name: true,
-                        last_name: true
+                        name: true,
                     },
                 },
             },
@@ -139,7 +140,7 @@ const deleteFiles = (payload) => __awaiter(void 0, void 0, void 0, function* () 
     const { paths } = payload;
     const updatedPaths = paths.map((path) => path.replace("/general/", ""));
     const { data, error } = yield supabase_1.default.storage
-        .from('general')
+        .from("general")
         .remove(updatedPaths);
     if ((error === null || error === void 0 ? void 0 : error.status) === 400 || (data === null || data === void 0 ? void 0 : data.length) === 0)
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "No valid file path found to delete");
@@ -159,5 +160,5 @@ const deleteFiles = (payload) => __awaiter(void 0, void 0, void 0, function* () 
 exports.FileServices = {
     filesUpload,
     getFiles,
-    deleteFiles
+    deleteFiles,
 };

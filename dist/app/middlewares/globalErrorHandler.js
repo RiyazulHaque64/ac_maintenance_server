@@ -38,6 +38,7 @@ const globalErrorHandler = (error, req, res, next) => {
         errorSources = simplifiedError.errorSources;
     }
     res.status(statusCode).json({
+        statusCode,
         success: false,
         message,
         errorSources,

@@ -32,7 +32,8 @@ const getFiles = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0,
         statusCode: http_status_1.default.OK,
         success: true,
         message: "Files retrieved successfully",
-        data: result,
+        meta: result.meta,
+        data: result.data,
     });
 }));
 const deleteFiles = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,5 +48,5 @@ const deleteFiles = (0, catchAsync_1.default)((req, res, next) => __awaiter(void
 exports.FileControllers = {
     filesUpload,
     getFiles,
-    deleteFiles
+    deleteFiles,
 };

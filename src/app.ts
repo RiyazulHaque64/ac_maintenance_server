@@ -5,7 +5,6 @@ import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFoundHandler from "./app/middlewares/notFoundHandler";
 import router from "./app/routes";
 import SwaggerRoutes from "./app/routes/swagger.routes";
-import configureCors from "./app/utils/configureCors";
 import config from "./app/config";
 import cookieParser from "cookie-parser";
 
@@ -14,7 +13,15 @@ const app: Application = express();
 // middlewares configuration
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors(configureCors));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:8083",
+      "https://ac-maintenance-client.vercel.app/",
+    ],
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 // test server

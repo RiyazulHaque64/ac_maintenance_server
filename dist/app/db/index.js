@@ -18,8 +18,7 @@ const config_1 = __importDefault(require("../config"));
 const prisma_1 = __importDefault(require("../shared/prisma"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const superAdmin = {
-    first_name: config_1.default.super_admin_f_name,
-    last_name: config_1.default.super_admin_l_name,
+    name: config_1.default.super_admin_name,
     email: config_1.default.email,
     role: client_1.UserRole.SUPER_ADMIN,
 };

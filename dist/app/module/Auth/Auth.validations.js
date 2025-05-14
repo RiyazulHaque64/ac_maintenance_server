@@ -6,15 +6,12 @@ const zod_1 = require("zod");
 const createUserValidationSchema = zod_1.z.object({
     body: zod_1.z
         .object({
-        first_name: zod_1.z
-            .string({ invalid_type_error: "First name should be a text" })
-            .min(1, { message: "First name must be at least 1 characters long" })
+        name: zod_1.z
+            .string({ invalid_type_error: "Name should be a text" })
+            .min(1, { message: "Name must be at least 1 characters long" })
             .max(100, {
-            message: "First name must be at most 100 characters long",
+            message: "Name must be at most 50 characters long",
         }),
-        last_name: zod_1.z
-            .string({ invalid_type_error: "Last name should be a text" })
-            .optional(),
         email: zod_1.z.string().email({ message: "Invalid email address" }),
         password: zod_1.z
             .string({

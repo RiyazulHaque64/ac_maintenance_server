@@ -21,7 +21,8 @@ const jwtHelpers_1 = require("../utils/jwtHelpers");
 const auth = (...roles) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const token = req.headers.authorization;
+            // const token = req.headers.authorization;
+            const token = req.cookies.token;
             if (!token) {
                 throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized");
             }
@@ -43,7 +44,9 @@ const auth = (...roles) => {
             if (verifiedUser && passwordChangedTime > verifiedUser.iat) {
                 throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Password changed recently");
             }
-            if (verifiedUser && (roles === null || roles === void 0 ? void 0 : roles.length) && !roles.includes(verifiedUser === null || verifiedUser === void 0 ? void 0 : verifiedUser.role)) {
+            if (verifiedUser &&
+                (roles === null || roles === void 0 ? void 0 : roles.length) &&
+                !roles.includes(verifiedUser === null || verifiedUser === void 0 ? void 0 : verifiedUser.role)) {
                 throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized");
             }
             req.user = verifiedUser;

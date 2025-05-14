@@ -3,8 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userFilterableFields = exports.userSearchableFields = exports.userSortableFields = exports.userSelectedFields = void 0;
 exports.userSelectedFields = {
     id: true,
-    first_name: true,
-    last_name: true,
+    name: true,
     email: true,
     contact_number: true,
     profile_pic: true,
@@ -15,8 +14,7 @@ exports.userSelectedFields = {
 };
 exports.userSortableFields = [
     "id",
-    "first_name",
-    "last_name",
+    "name",
     "email",
     "contact_number",
     "created_at",
@@ -24,17 +22,10 @@ exports.userSortableFields = [
     "role",
     "status",
 ];
-exports.userSearchableFields = [
-    "id",
-    "first_name",
-    "last_name",
-    "email",
-    "contact_number",
-];
+exports.userSearchableFields = ["id", "name", "email", "contact_number"];
 exports.userFilterableFields = [
     "id",
-    "first_name",
-    "last_name",
+    "name",
     "email",
     "contact_number",
     "searchTerm",
