@@ -52,7 +52,7 @@ const createPost = async (user: TAuthUser, data: IBlog) => {
 };
 
 const getPosts = async (query: Record<string, any>) => {
-  const { searchTerm, page, limit, sortBy, sortOrder, id, slug, featured } =
+  const { searchTerm, page, limit, sortBy, sortOrder, id, slug, filter_by } =
     query;
   if (sortBy) {
     fieldValidityChecker(blogSortableFields, sortBy);
@@ -80,10 +80,31 @@ const getPosts = async (query: Record<string, any>) => {
       slug,
     });
 
-  if (featured) {
-    andConditions.push({
-      featured: Boolean(featured),
-    });
+  if (filter_by) {
+    switch (filter_by) {
+      case "published":
+        andConditions.push({
+          published: true,
+        });
+        break;
+      case "draft":
+        andConditions.push({
+          published: false,
+        });
+        break;
+      case "featured":
+        andConditions.push({
+          featured: true,
+        });
+        break;
+      case "unfeatured":
+        andConditions.push({
+          featured: false,
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   if (searchTerm) {
