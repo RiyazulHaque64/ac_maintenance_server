@@ -8,6 +8,7 @@ import pagination from "../../utils/pagination";
 import { userSelectedFields } from "../User/User.constants";
 import { blogSearchableFields, blogSortableFields } from "./Blog.constants";
 import { IBlog } from "./Blog.interfaces";
+import { validDateChecker } from "../../utils/checker";
 
 const createPost = async (user: TAuthUser, data: IBlog) => {
   const tags = data?.tags?.filter((t) => uuidRegex.test(t)) || [];
@@ -52,20 +53,31 @@ const createPost = async (user: TAuthUser, data: IBlog) => {
 };
 
 const getPosts = async (query: Record<string, any>) => {
-  const { searchTerm, page, limit, sortBy, sortOrder, id, slug, filter_by } =
-    query;
-  if (sortBy) {
-    fieldValidityChecker(blogSortableFields, sortBy);
+  const {
+    search_term,
+    page,
+    limit,
+    sort_by,
+    sort_order,
+    id,
+    slug,
+    filter_by,
+    from_date,
+    to_date,
+  } = query;
+
+  if (sort_by) {
+    fieldValidityChecker(blogSortableFields, sort_by);
   }
-  if (sortOrder) {
-    fieldValidityChecker(sortOrderType, sortOrder);
+  if (sort_order) {
+    fieldValidityChecker(sortOrderType, sort_order);
   }
 
   const { pageNumber, limitNumber, skip, sortWith, sortSequence } = pagination({
     page,
     limit,
-    sortBy,
-    sortOrder,
+    sortBy: sort_by,
+    sortOrder: sort_order,
   });
 
   const andConditions: Prisma.BlogWhereInput[] = [];
@@ -107,14 +119,32 @@ const getPosts = async (query: Record<string, any>) => {
     }
   }
 
-  if (searchTerm) {
+  if (search_term) {
     andConditions.push({
       OR: blogSearchableFields.map((field) => ({
         [field]: {
-          contains: searchTerm,
+          contains: search_term,
           mode: "insensitive",
         },
       })),
+    });
+  }
+
+  if (from_date) {
+    const date = validDateChecker(from_date, "fromDate");
+    andConditions.push({
+      created_at: {
+        gte: date,
+      },
+    });
+  }
+
+  if (to_date) {
+    const date = validDateChecker(to_date, "toDate");
+    andConditions.push({
+      created_at: {
+        lte: date,
+      },
     });
   }
 
@@ -122,35 +152,44 @@ const getPosts = async (query: Record<string, any>) => {
     AND: andConditions,
   };
 
-  const result = await prisma.blog.findMany({
-    where: whereConditons,
-    skip,
-    take: limitNumber,
-    orderBy: {
-      [sortWith]: sortSequence,
-    },
-    include: {
-      author: {
-        select: {
-          ...userSelectedFields,
-        },
+  const [result, total, published, featured] = await Promise.all([
+    prisma.blog.findMany({
+      where: whereConditons,
+      skip,
+      take: limitNumber,
+      orderBy: {
+        [sortWith]: sortSequence,
       },
-      tags: true,
-    },
-  });
+      include: {
+        author: {
+          select: {
+            ...userSelectedFields,
+          },
+        },
+        tags: true,
+      },
+    }),
+    prisma.blog.count({ where: whereConditons }),
+    prisma.blog.count({ where: { published: true, ...whereConditons } }),
+    prisma.blog.count({ where: { featured: true, ...whereConditons } }),
+  ]);
 
   const formattedResult = result.map((item) => ({
     ...item,
     tags: item.tags.map((tag) => tag.name),
   }));
 
-  const total = await prisma.blog.count({ where: whereConditons });
-
   return {
     meta: {
       page: pageNumber,
       limit: limitNumber,
       total,
+      stats: {
+        published: published,
+        draft: total - published,
+        featured: featured,
+        unfeatured: total - featured,
+      },
     },
     data: formattedResult,
   };

@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ServiceRoutes = void 0;
+const client_1 = require("@prisma/client");
+const express_1 = require("express");
+const auth_1 = __importDefault(require("../../middlewares/auth"));
+const validateRequest_1 = __importDefault(require("../../middlewares/validateRequest"));
+const Service_controllers_1 = require("./Service.controllers");
+const common_1 = require("../../schema/common");
+const Service_validations_1 = require("./Service.validations");
+const router = (0, express_1.Router)();
+router.post("/", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(Service_validations_1.ServiceValidations.createServiceValidationSchema), Service_controllers_1.ServiceControllers.createService);
+router.get("/", Service_controllers_1.ServiceControllers.getServices);
+router.delete("/delete-services", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(common_1.deleteValidationSchema), Service_controllers_1.ServiceControllers.deleteService);
+router.get("/:id", Service_controllers_1.ServiceControllers.getSingleService);
+router.patch("/:id", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(Service_validations_1.ServiceValidations.updateServiceValidationSchema), Service_controllers_1.ServiceControllers.updateService);
+exports.ServiceRoutes = router;
