@@ -13,17 +13,16 @@ const swagger_routes_1 = __importDefault(require("./app/routes/swagger.routes"))
 const config_1 = __importDefault(require("./app/config"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
-console.log("something");
-// middlewares configuration
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)({
     origin: [
         "http://localhost:8089",
-        "https://ac-maintenance-client.vercel.app/",
+        "https://ac-maintenance-client.vercel.app",
     ],
     credentials: true,
 }));
+// middlewares configuration
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 // test server
 app.get("/", (req, res) => {

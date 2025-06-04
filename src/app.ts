@@ -10,20 +10,19 @@ import cookieParser from "cookie-parser";
 
 const app: Application = express();
 
-console.log("something");
-
-// middlewares configuration
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: [
       "http://localhost:8089",
-      "https://ac-maintenance-client.vercel.app/",
+      "https://ac-maintenance-client.vercel.app",
     ],
     credentials: true,
   })
 );
+
+// middlewares configuration
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // test server
