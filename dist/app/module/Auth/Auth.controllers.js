@@ -43,6 +43,7 @@ const login = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, vo
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "none",
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     (0, sendResponse_1.default)(res, {
