@@ -41,7 +41,7 @@ const login = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, vo
     const _a = yield Auth_services_1.AuthServices.login(req.body), { token } = _a, result = __rest(_a, ["token"]);
     res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "none",
         path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000,

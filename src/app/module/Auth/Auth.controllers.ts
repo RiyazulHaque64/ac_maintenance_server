@@ -19,7 +19,7 @@ const login = catchAsync(async (req, res, next) => {
   const { token, ...result } = await AuthServices.login(req.body);
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "none",
     path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
