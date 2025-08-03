@@ -1,3 +1,45 @@
 export const sortOrderType = ["asc", "desc"];
 
-export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+export const uuidRegex =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+export const PREPOSITIONS = new Set([
+  "in",
+  "on",
+  "at",
+  "with",
+  "by",
+  "about",
+  "against",
+  "between",
+  "into",
+  "through",
+  "during",
+  "before",
+  "after",
+  "above",
+  "below",
+  "to",
+  "from",
+  "up",
+  "down",
+  "for",
+  "over",
+  "under",
+  "again",
+  "further",
+  "than",
+  "once",
+  "of",
+  "off",
+  "out",
+  "around",
+  "near",
+  "as",
+  "but",
+  "like",
+  "because",
+  "a",
+  "an",
+  "the",
+]);

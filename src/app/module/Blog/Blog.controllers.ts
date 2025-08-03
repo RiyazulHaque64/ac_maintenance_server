@@ -69,10 +69,23 @@ const deletePosts = catchAsync(
   }
 );
 
+const getRelatedPosts = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res, next) => {
+    const result = await BlogServices.getRelatedPosts(req.params.slug);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Related posts retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 export const BlogControllers = {
   createPost,
   getPosts,
   updatePost,
   deletePosts,
   getSinglePost,
+  getRelatedPosts,
 };

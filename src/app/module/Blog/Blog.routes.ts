@@ -17,6 +17,8 @@ router.post(
 
 router.get("/posts", BlogControllers.getPosts);
 
+router.get("/related-posts/:slug", BlogControllers.getRelatedPosts);
+
 router.patch(
   "/post/:slug",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
