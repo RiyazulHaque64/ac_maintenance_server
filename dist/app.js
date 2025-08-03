@@ -19,6 +19,7 @@ app.use((0, cors_1.default)({
         "https://ac-maintenance-client.vercel.app",
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 }));
 // middlewares configuration
 app.use(express_1.default.json());

@@ -195,23 +195,24 @@ const getPosts = async (query: Record<string, any>) => {
   };
 };
 
-const getSinglePost = async (id: string) => {
+const getSinglePost = async (slug: string) => {
   const result = await prisma.blog.findUniqueOrThrow({
     where: {
-      id,
+      slug,
     },
     include: {
       tags: true,
     },
   });
+
   const formattedResult = {
     ...result,
-    tags: result.tags?.map((tag) => tag.id),
+    tags: result.tags?.map((tag) => ({ id: tag.id, name: tag.name })),
   };
   return formattedResult;
 };
 
-const updatePost = async (id: string, payload: Record<string, any>) => {
+const updatePost = async (slug: string, payload: Record<string, any>) => {
   const { tags: inputTags = [], ...rest } = payload;
   const tags = inputTags?.filter((t: string) => uuidRegex.test(t)) || [];
   if (inputTags?.length !== tags.length) {
@@ -244,7 +245,7 @@ const updatePost = async (id: string, payload: Record<string, any>) => {
   }
   const result = await prisma.blog.update({
     where: {
-      id,
+      slug,
     },
     data: {
       ...rest,

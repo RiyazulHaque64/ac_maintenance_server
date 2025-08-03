@@ -18,7 +18,7 @@ router.post(
 router.get("/posts", BlogControllers.getPosts);
 
 router.patch(
-  "/post/:id",
+  "/post/:slug",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   validateRequest(BlogValidations.updatePostValidationSchema),
   BlogControllers.updatePost
@@ -31,6 +31,6 @@ router.delete(
   BlogControllers.deletePosts
 );
 
-router.get("/post/:id", BlogControllers.getSinglePost);
+router.get("/post/:slug", BlogControllers.getSinglePost);
 
 export const BlogRoutes = router;
