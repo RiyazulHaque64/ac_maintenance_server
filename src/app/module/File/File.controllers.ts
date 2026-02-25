@@ -14,7 +14,7 @@ const filesUpload = catchAsync(
       message: "Files uploaded successfully",
       data: result,
     });
-  }
+  },
 );
 
 const getFiles = catchAsync(
@@ -27,7 +27,7 @@ const getFiles = catchAsync(
       meta: result.meta,
       data: result.data,
     });
-  }
+  },
 );
 
 const deleteFiles = catchAsync(
@@ -39,7 +39,7 @@ const deleteFiles = catchAsync(
       message: "Files deleted successfully",
       data: result,
     });
-  }
+  },
 );
 
 export const FileControllers = {

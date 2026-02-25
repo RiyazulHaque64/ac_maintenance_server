@@ -32,12 +32,16 @@ const filesUpload = async (req: Request & { user?: TAuthUser }) => {
         continue;
       }
       const name = `${Date.now()}-${file.originalname}`;
+
       const metadata = await sharp(file.buffer).metadata();
+
       const { data } = await supabase.storage
         .from("general")
         .upload(name, file.buffer, {
           contentType: file.mimetype,
         });
+
+      console.log("data: ", file.mimetype, file.buffer);
 
       if (data?.id) {
         prepared_files.push({
@@ -158,7 +162,7 @@ const deleteFiles = async (payload: { paths: string[] }) => {
   if ((error as any)?.status === 400 || data?.length === 0)
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "No valid file path found to delete"
+      "No valid file path found to delete",
     );
 
   const deletedFilesBucketId = data?.map((file) => file.id);
