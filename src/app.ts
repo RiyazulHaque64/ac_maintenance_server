@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 
 const app: Application = express();
 
-const allowedOrigins = ["http://localhost:3000/*"];
+const allowedOrigins = ["http://localhost:3000"];
 
 app.use(
   cors({
@@ -25,7 +25,6 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
