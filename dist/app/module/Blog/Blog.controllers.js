@@ -37,7 +37,7 @@ const getPosts = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0,
     });
 }));
 const getSinglePost = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Blog_services_1.BlogServices.getSinglePost(req.params.id);
+    const result = yield Blog_services_1.BlogServices.getSinglePost(req.params.slug);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -46,7 +46,7 @@ const getSinglePost = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
     });
 }));
 const updatePost = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Blog_services_1.BlogServices.updatePost(req.params.id, req.body);
+    const result = yield Blog_services_1.BlogServices.updatePost(req.params.slug, req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -63,10 +63,20 @@ const deletePosts = (0, catchAsync_1.default)((req, res, next) => __awaiter(void
         data: result,
     });
 }));
+const getRelatedPosts = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Blog_services_1.BlogServices.getRelatedPosts(req.params.slug);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Related posts retrieved successfully",
+        data: result,
+    });
+}));
 exports.BlogControllers = {
     createPost,
     getPosts,
     updatePost,
     deletePosts,
-    getSinglePost
+    getSinglePost,
+    getRelatedPosts,
 };

@@ -1,5 +1,45 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uuidRegex = exports.sortOrderType = void 0;
+exports.PREPOSITIONS = exports.uuidRegex = exports.sortOrderType = void 0;
 exports.sortOrderType = ["asc", "desc"];
 exports.uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+exports.PREPOSITIONS = new Set([
+    "in",
+    "on",
+    "at",
+    "with",
+    "by",
+    "about",
+    "against",
+    "between",
+    "into",
+    "through",
+    "during",
+    "before",
+    "after",
+    "above",
+    "below",
+    "to",
+    "from",
+    "up",
+    "down",
+    "for",
+    "over",
+    "under",
+    "again",
+    "further",
+    "than",
+    "once",
+    "of",
+    "off",
+    "out",
+    "around",
+    "near",
+    "as",
+    "but",
+    "like",
+    "because",
+    "a",
+    "an",
+    "the",
+]);

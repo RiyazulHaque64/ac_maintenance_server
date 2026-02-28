@@ -21,17 +21,17 @@ const getUtilities = () => __awaiter(void 0, void 0, void 0, function* () {
     const tags = yield prisma_1.default.tag.findMany();
     const featureGroups = yield prisma_1.default.featureGroup.findMany({
         include: {
-            feature: true
-        }
+            feature: true,
+        },
     });
     return {
         tags,
-        feature_groups: featureGroups
+        feature_groups: featureGroups,
     };
 });
 const addTag = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.tag.create({
-        data
+        data,
     });
     return result;
 });
@@ -73,7 +73,7 @@ const getTags = (query) => __awaiter(void 0, void 0, void 0, function* () {
         take: limitNumber,
         orderBy: {
             [sortWith]: sortSequence,
-        }
+        },
     });
     const total = yield prisma_1.default.tag.count({ where: whereConditons });
     return {
@@ -88,9 +88,9 @@ const getTags = (query) => __awaiter(void 0, void 0, void 0, function* () {
 const updateTag = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.tag.update({
         where: {
-            id
+            id,
         },
-        data: payload
+        data: payload,
     });
     return result;
 });
@@ -98,13 +98,13 @@ const deleteTags = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ids }) {
     const result = yield prisma_1.default.tag.deleteMany({
         where: {
             id: {
-                in: ids
-            }
-        }
+                in: ids,
+            },
+        },
     });
     return {
         deleted_count: result.count,
-        message: `${result.count} tags deleted successfully`
+        message: `${result.count} tags deleted successfully`,
     };
 });
 exports.UtilityServices = {
@@ -112,5 +112,5 @@ exports.UtilityServices = {
     getTags,
     updateTag,
     deleteTags,
-    getUtilities
+    getUtilities,
 };

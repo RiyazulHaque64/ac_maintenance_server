@@ -42,6 +42,7 @@ const filesUpload = (req) => __awaiter(void 0, void 0, void 0, function* () {
                 .upload(name, file.buffer, {
                 contentType: file.mimetype,
             });
+            console.log("data: ", file.mimetype, file.buffer);
             if (data === null || data === void 0 ? void 0 : data.id) {
                 prepared_files.push({
                     user_id: user.id,

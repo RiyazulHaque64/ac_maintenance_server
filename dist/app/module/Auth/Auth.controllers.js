@@ -50,7 +50,7 @@ const login = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, vo
         statusCode: http_status_1.default.OK,
         success: true,
         message: "User logged in successfully",
-        data: Object.assign({}, result),
+        data: Object.assign(Object.assign({}, result), { token }),
     });
 }));
 const resetPassword = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,7 +63,7 @@ const resetPassword = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
         statusCode: http_status_1.default.OK,
         success: true,
         message: "Password reset successfully",
-        data: Object.assign({}, rest),
+        data: Object.assign(Object.assign({}, rest), { token }),
     });
 }));
 const forgotPassword = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

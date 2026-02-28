@@ -155,16 +155,26 @@ const getPosts = (query) => __awaiter(void 0, void 0, void 0, function* () {
             },
             include: {
                 author: {
-                    select: Object.assign({}, User_constants_1.userSelectedFields),
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        contact_number: true,
+                        profile_pic: true,
+                    },
                 },
-                tags: true,
+                tags: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
             },
         }),
         prisma_1.default.blog.count({ where: whereConditons }),
         prisma_1.default.blog.count({ where: Object.assign({ published: true }, whereConditons) }),
         prisma_1.default.blog.count({ where: Object.assign({ featured: true }, whereConditons) }),
     ]);
-    const formattedResult = result.map((item) => (Object.assign(Object.assign({}, item), { tags: item.tags.map((tag) => tag.name) })));
     return {
         meta: {
             page: pageNumber,
@@ -177,70 +187,94 @@ const getPosts = (query) => __awaiter(void 0, void 0, void 0, function* () {
                 unfeatured: total - featured,
             },
         },
-        data: formattedResult,
+        data: result,
     };
 });
-const getSinglePost = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const getSinglePost = (slug) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield prisma_1.default.blog.findUniqueOrThrow({
         where: {
-            id,
+            slug,
         },
         include: {
-            tags: true,
+            author: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    contact_number: true,
+                    profile_pic: true,
+                },
+            },
+            tags: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
         },
     });
-    const formattedResult = Object.assign(Object.assign({}, result), { tags: (_a = result.tags) === null || _a === void 0 ? void 0 : _a.map((tag) => tag.id) });
-    return formattedResult;
+    return result;
 });
-const updatePost = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updatePost = (slug, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // Step 1: Extract `tags` from payload and keep the rest of the blog data
     const { tags: inputTags = [] } = payload, rest = __rest(payload, ["tags"]);
-    const tags = (inputTags === null || inputTags === void 0 ? void 0 : inputTags.filter((t) => common_1.uuidRegex.test(t))) || [];
-    if ((inputTags === null || inputTags === void 0 ? void 0 : inputTags.length) !== tags.length) {
-        const newTags = inputTags.filter((t) => !common_1.uuidRegex.test(t));
-        if (newTags.length) {
-            yield prisma_1.default.tag.createMany({
-                data: newTags.map((t) => ({ name: t })),
+    // Step 2: Filter out existing tags (assumed to be UUIDs)
+    const existingTagIds = inputTags.filter((t) => common_1.uuidRegex.test(t));
+    // Step 3: Identify new tags that are not UUIDs (names only)
+    const newTagNames = inputTags.filter((t) => !common_1.uuidRegex.test(t));
+    // Step 4: Initialize slug (use current or generate from title if needed)
+    let generatedSlug = payload.slug;
+    // Step 5: If title is provided, generate a new slug and ensure uniqueness
+    if (payload.title) {
+        generatedSlug = (0, generateSlug_1.generateSlug)(payload.title);
+        // Step 5.1: Check if the generated slug already exists
+        const isExist = yield prisma_1.default.blog.findFirst({
+            where: { slug: generatedSlug },
+        });
+        // Step 5.2: If exists, append timestamp to make it unique
+        if (isExist) {
+            generatedSlug = `${generatedSlug}-${Date.now()}`;
+        }
+    }
+    // Step 6: Run all DB operations inside a transaction
+    const result = yield prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+        let allTagIds = [...existingTagIds];
+        // Step 6.1: If there are new tags, create them
+        if (newTagNames.length) {
+            yield tx.tag.createMany({
+                data: newTagNames.map((name) => ({ name })),
+                skipDuplicates: true,
             });
-            const addedTags = yield prisma_1.default.tag.findMany({
+            // Step 6.2: Fetch the newly created tags to get their IDs
+            const createdTags = yield tx.tag.findMany({
                 where: {
                     name: {
-                        in: newTags,
+                        in: newTagNames,
                     },
                 },
             });
-            addedTags.forEach((newTag) => tags.push(newTag.id));
+            // Step 6.3: Add newly created tag IDs to the full tag list
+            allTagIds = [...allTagIds, ...createdTags.map((tag) => tag.id)];
         }
-    }
-    if (payload.title) {
-        let slug = (0, generateSlug_1.generateSlug)(payload.title);
-        const isExist = yield prisma_1.default.blog.findFirst({
-            where: {
-                slug,
+        // Step 6.4: Update the blog post with new data and tags
+        const updatedPost = yield tx.blog.update({
+            where: { slug },
+            data: Object.assign(Object.assign(Object.assign({}, rest), { slug: generatedSlug }), (allTagIds.length > 0 && {
+                tags: {
+                    set: allTagIds.map((id) => ({ id })),
+                },
+            })),
+            include: {
+                author: {
+                    select: Object.assign({}, User_constants_1.userSelectedFields),
+                },
+                tags: true,
             },
         });
-        if (isExist) {
-            slug = `${slug}-${Date.now()}`;
-        }
-        payload.slug = slug;
-    }
-    const result = yield prisma_1.default.blog.update({
-        where: {
-            id,
-        },
-        data: Object.assign(Object.assign({}, rest), (tags &&
-            tags.length > 0 && {
-            tags: {
-                set: tags.map((tagId) => ({ id: tagId })),
-            },
-        })),
-        include: {
-            author: {
-                select: Object.assign({}, User_constants_1.userSelectedFields),
-            },
-            tags: true,
-        },
-    });
+        // Step 6.5: Return the updated blog post
+        return updatedPost;
+    }));
+    // Step 7: Return the final result to the caller
     return result;
 });
 const deletePosts = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ids }) {
@@ -256,10 +290,76 @@ const deletePosts = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ids }) 
         message: `${result.count} post deleted successfully`,
     };
 });
+const getRelatedPosts = (slug) => __awaiter(void 0, void 0, void 0, function* () {
+    // Step 1: Get the post with tags
+    const post = yield prisma_1.default.blog.findUniqueOrThrow({
+        where: {
+            slug,
+        },
+        include: {
+            tags: {
+                select: {
+                    id: true,
+                },
+            },
+        },
+    });
+    const tagIds = post.tags.map((tag) => tag.id);
+    const keywords = [
+        ...new Set(post.title
+            .toLowerCase()
+            .split(/\s+/)
+            .filter((word) => word && !common_1.PREPOSITIONS.has(word))),
+    ];
+    // Step 2: Find related post by shared tags OR similar title
+    const relatedPosts = yield prisma_1.default.blog.findMany({
+        where: {
+            id: { not: post.id },
+            published: true,
+            OR: [
+                {
+                    tags: {
+                        some: {
+                            id: { in: tagIds },
+                        },
+                    },
+                },
+                {
+                    OR: keywords.map((word) => ({
+                        title: {
+                            contains: word,
+                            mode: "insensitive",
+                        },
+                    })),
+                },
+            ],
+        },
+        take: 10,
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    contact_number: true,
+                    profile_pic: true,
+                },
+            },
+            tags: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        },
+    });
+    return relatedPosts;
+});
 exports.BlogServices = {
     createPost,
     getPosts,
     updatePost,
     deletePosts,
     getSinglePost,
+    getRelatedPosts,
 };
