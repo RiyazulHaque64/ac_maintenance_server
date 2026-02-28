@@ -14,10 +14,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:8089",
+      "http://localhost:3000",
       "https://ac-maintenance-client.vercel.app",
     ],
     credentials: true,
-  })
+  }),
 );
 
 // middlewares configuration

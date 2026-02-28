@@ -11,11 +11,11 @@ const auth = (...roles: string[]) => {
   return async (
     req: Request & { user?: TAuthUser },
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) => {
     try {
-      // const token = req.headers.authorization;
-      const token = req.cookies.token;
+      const token = req.headers.authorization;
+      // const token = req.cookies.token;
 
       if (!token) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized");
@@ -38,13 +38,13 @@ const auth = (...roles: string[]) => {
       });
 
       const passwordChangedTime = Math.floor(
-        new Date(user.password_changed_at).getTime() / 1000
+        new Date(user.password_changed_at).getTime() / 1000,
       );
 
       if (verifiedUser && passwordChangedTime > verifiedUser.iat) {
         throw new ApiError(
           httpStatus.UNAUTHORIZED,
-          "Password changed recently"
+          "Password changed recently",
         );
       }
 
