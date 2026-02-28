@@ -18,26 +18,13 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-
-      try {
-        const cleanOrigin = new URL(origin).origin;
-
-        if (allowedOrigins.includes(cleanOrigin)) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      } catch {
-        callback(new Error("Invalid origin"));
-      }
-    },
-    credentials: true,
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+app.options("*", cors());
 
 // middlewares configuration
 app.use(express.json());
