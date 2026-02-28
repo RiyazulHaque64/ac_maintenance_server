@@ -12,11 +12,7 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:8089",
-      "http://localhost:3000",
-      "https://ac-maintenance-client.vercel.app",
-    ],
+    origin: ["http://localhost:3000"],
     credentials: true,
   }),
 );
