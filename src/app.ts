@@ -20,7 +20,7 @@ app.use((req, res, next) => {
     "https://maintenanceqt.vercel.app",
   );
 
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 
   res.setHeader(
     "Access-Control-Allow-Methods",
