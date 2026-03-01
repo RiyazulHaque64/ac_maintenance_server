@@ -17,13 +17,13 @@ const createUser = catchAsync(async (req, res, next) => {
 
 const login = catchAsync(async (req, res, next) => {
   const { token, ...result } = await AuthServices.login(req.body);
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+  // res.cookie("token", token, {
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: "none",
+  //   path: "/",
+  //   maxAge: 7 * 24 * 60 * 60 * 1000,
+  // });
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -39,7 +39,7 @@ const resetPassword = catchAsync(
   async (req: Request & { user?: TAuthUser }, res, next) => {
     const { token, ...rest } = await AuthServices.resetPassword(
       req.user,
-      req.body
+      req.body,
     );
     res.cookie("token", token, {
       httpOnly: true,
@@ -54,7 +54,7 @@ const resetPassword = catchAsync(
         token,
       },
     });
-  }
+  },
 );
 
 const forgotPassword = catchAsync(async (req, res, next) => {
