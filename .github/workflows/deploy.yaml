@@ -1,0 +1,82 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.16.0
+
+      - name: Install dependencies
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy' }}
+        run: npm install --frozen-lockfile
+
+      - name: Build app
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy' }}
+        run: npm run build
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Properly add the host to known_hosts
+          ssh-keyscan ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        env:
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          # Create deployment directory
+          ssh $VPS_USER@$VPS_HOST "mkdir -p ~/maintenance_server"
+
+          # Copy files to VPS instance
+          rsync -avz \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude '.github' \
+            . $VPS_USER@$VPS_HOST:~/maintenance_server/
+
+
+
+          # SSH and install dependencies, restart app via PM2
+          ssh $VPS_USER@$VPS_HOST << 'EOF'
+            cd ~/maintenance_server
+
+          # Use NVM's Node/npm
+          export NODE_PATH="/home/ubuntu/.nvm/versions/node/v22.16.0"
+          export PATH="$NODE_PATH/bin:$PATH"
+
+          # Install dependencies
+          npm install --omit=dev
+
+          # Install PM2 globally if not already installed
+          if ! command -v pm2 &> /dev/null; then
+            npm install -g pm2
+          fi
+
+          # Stop existing app (ignore error if it doesn't exist yet)
+          pm2 delete maintenance-server || true
+
+          # Start app using PM2
+          pm2 start dist/server.js --name maintenance-server
+
+          # Save PM2 process list
+          pm2 save
+          EOF
