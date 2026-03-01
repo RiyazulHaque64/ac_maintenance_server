@@ -10,7 +10,7 @@ import cors from "cors";
 
 const app: Application = express();
 
-app.use(cors());
+app.use(cors({ origin: "https://maintenanceqt.vercel.app" }));
 
 // middlewares configuration
 app.use(express.json());
