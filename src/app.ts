@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://maintenance-client-smoky.vercel.app",
+    "https://maintenanceqt.vercel.app",
   );
 
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
