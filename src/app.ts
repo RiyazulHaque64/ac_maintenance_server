@@ -6,35 +6,38 @@ import router from "./app/routes";
 import SwaggerRoutes from "./app/routes/swagger.routes";
 import config from "./app/config";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const app: Application = express();
+
+app.use(cors());
 
 // middlewares configuration
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use((req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://maintenanceqt.vercel.app",
-  );
+// app.use((req, res, next) => {
+//   res.setHeader(
+//     "Access-Control-Allow-Origin",
+//     "https://maintenanceqt.vercel.app",
+//   );
 
-  // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+//   // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-  );
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+//   );
 
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+//   if (req.method === "OPTIONS") {
+//     return res.status(200).end();
+//   }
 
-  next();
-});
+//   next();
+// });
 
 // test server
 app.get("/", (req, res) => {
