@@ -17,13 +17,8 @@ const createUser = catchAsync(async (req, res, next) => {
 
 const login = catchAsync(async (req, res, next) => {
   const { token, ...result } = await AuthServices.login(req.body);
-  // res.cookie("token", token, {
-  //   httpOnly: true,
-  //   secure: true,
-  //   sameSite: "none",
-  //   path: "/",
-  //   maxAge: 7 * 24 * 60 * 60 * 1000,
-  // });
+  const maxAge = 60 * 24 * 60 * 60 * 1000;
+  res.cookie("token", token, { maxAge, httpOnly: true });
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
