@@ -29,13 +29,17 @@ const auth = (...roles: string[]) => {
         throw new ApiError(httpStatus.UNAUTHORIZED, "Session expired");
       }
 
-      const user = await prisma.user.findUniqueOrThrow({
+      const user = await prisma.user.findUnique({
         where: {
           id: verifiedUser?.id,
           is_deleted: false,
           status: UserStatus.ACTIVE,
         },
       });
+
+      if (!user) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "User not found");
+      }
 
       const passwordChangedTime = Math.floor(
         new Date(user.password_changed_at).getTime() / 1000,

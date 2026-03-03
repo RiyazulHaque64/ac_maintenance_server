@@ -10,6 +10,7 @@ import {
 import { IGallery, IGalleryItem } from "./Gallery.interface";
 
 const createGallery = async (data: IGallery) => {
+  console.log("data: ", data);
   const result = await prisma.gallery.create({
     data,
   });
