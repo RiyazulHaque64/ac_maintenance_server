@@ -6,6 +6,7 @@ import { FileRoutes } from "../module/File/File.routes";
 import { UserRoutes } from "../module/User/User.routes";
 import { UtilityRoutes } from "../module/Utility/Utility.routes";
 import { ServiceRoutes } from "../module/Service/Service.routes";
+import { GalleryRoutes } from "../module/Gallery/Gallery.routes";
 
 const router = Router();
 
@@ -25,6 +26,10 @@ const routes = [
   {
     path: "/service",
     route: ServiceRoutes,
+  },
+  {
+    path: "/gallery",
+    route: GalleryRoutes,
   },
   {
     path: "/file",

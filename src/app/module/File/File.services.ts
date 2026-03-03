@@ -19,6 +19,8 @@ const filesUpload = async (req: Request & { user?: TAuthUser }) => {
   const files = req.files as TFiles;
   const user = req.user as TAuthUser;
 
+  console.log("files: ", files);
+
   if (!files?.files?.length) {
     throw new ApiError(httpStatus.BAD_REQUEST, "No file found");
   }
