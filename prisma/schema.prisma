@@ -118,8 +118,8 @@ model File {
   updated_at DateTime @updatedAt
 
   uploaded_by User     @relation(fields: [user_id], references: [id])
-  galleryId   String?
-  gallery     Gallery? @relation("GalleryImages", fields: [galleryId], references: [id])
+  gallery_id  String?
+  gallery     Gallery? @relation("GalleryImages", fields: [gallery_id], references: [id])
 
   @@map("files")
 }
