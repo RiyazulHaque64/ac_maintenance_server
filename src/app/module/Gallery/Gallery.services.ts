@@ -63,7 +63,7 @@ const getGalleries = async (query: Record<string, any>) => {
       [sortWith]: sortSequence,
     },
     include: {
-      files: true,
+      gallery_items: true,
     },
   });
 
@@ -85,7 +85,7 @@ const getSingleGallery = async (id: string) => {
       id,
     },
     include: {
-      files: true,
+      gallery_items: true,
     },
   });
   return result;
