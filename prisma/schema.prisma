@@ -65,9 +65,13 @@ model Service {
 }
 
 model Gallery {
-  id      String @id @default(uuid())
-  section String
-  files   File[] @relation("GalleryImages")
+  id         String   @id @default(uuid())
+  section    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  files      File[]   @relation("GalleryImages")
+
+  @@map("galleries")
 }
 
 model FeatureGroup {
