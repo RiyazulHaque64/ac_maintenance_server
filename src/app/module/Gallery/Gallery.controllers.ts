@@ -64,10 +64,23 @@ const deleteGallery = catchAsync(
   },
 );
 
+const createGalleryItems = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res, next) => {
+    const result = await GalleryServices.createGalleryItems(req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.CREATED,
+      success: true,
+      message: "Gallery items added successfully",
+      data: result,
+    });
+  },
+);
+
 export const GalleryControllers = {
   createGallery,
   getGalleries,
   getSingleGallery,
   updateGallery,
   deleteGallery,
+  createGalleryItems,
 };

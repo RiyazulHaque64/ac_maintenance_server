@@ -27,7 +27,25 @@ const updateGalleryValidationSchema = z.object({
     .strict(),
 });
 
+const createGalleryItemsValidationSchema = z.object({
+  body: z
+    .object({
+      gallery_id: z
+        .string({ invalid_type_error: "Gallery ID should be a text" })
+        .uuid({ message: "Invalid gallery ID" }),
+      file_ids: z
+        .array(
+          z
+            .string({ invalid_type_error: "File ID should be a text" })
+            .uuid({ message: "Invalid file ID" }),
+        )
+        .min(1, { message: "File IDs are required" }),
+    })
+    .strict(),
+});
+
 export const GalleryValidations = {
   createGalleryValidationSchema,
   updateGalleryValidationSchema,
+  createGalleryItemsValidationSchema,
 };

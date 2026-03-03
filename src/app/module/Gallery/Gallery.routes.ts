@@ -15,6 +15,13 @@ router.post(
   GalleryControllers.createGallery,
 );
 
+router.post(
+  "/add-items",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  validateRequest(GalleryValidations.createGalleryItemsValidationSchema),
+  GalleryControllers.createGalleryItems,
+);
+
 router.get("/", GalleryControllers.getGalleries);
 
 router.delete(

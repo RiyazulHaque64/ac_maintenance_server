@@ -7,7 +7,7 @@ import {
   gallerySearchableFields,
   gallerySortableFields,
 } from "./Gallery.constants";
-import { IGallery } from "./Gallery.interface";
+import { IGallery, IGalleryItem } from "./Gallery.interface";
 
 const createGallery = async (data: IGallery) => {
   const result = await prisma.gallery.create({
@@ -117,10 +117,23 @@ const deleteGalleries = async ({ ids }: { ids: string[] }) => {
   };
 };
 
+const createGalleryItems = async (data: IGalleryItem) => {
+  const items = data.file_ids.map((file_id) => ({
+    gallery_id: data.gallery_id,
+    file_id,
+  }));
+
+  const result = await prisma.galleryItem.createMany({
+    data: items,
+  });
+  return result;
+};
+
 export const GalleryServices = {
   createGallery,
   getGalleries,
   getSingleGallery,
   updateGallery,
   deleteGalleries,
+  createGalleryItems,
 };
