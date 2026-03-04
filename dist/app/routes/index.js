@@ -8,6 +8,7 @@ const File_routes_1 = require("../module/File/File.routes");
 const User_routes_1 = require("../module/User/User.routes");
 const Utility_routes_1 = require("../module/Utility/Utility.routes");
 const Service_routes_1 = require("../module/Service/Service.routes");
+const Gallery_routes_1 = require("../module/Gallery/Gallery.routes");
 const router = (0, express_1.Router)();
 const routes = [
     {
@@ -25,6 +26,10 @@ const routes = [
     {
         path: "/service",
         route: Service_routes_1.ServiceRoutes,
+    },
+    {
+        path: "/gallery",
+        route: Gallery_routes_1.GalleryRoutes,
     },
     {
         path: "/file",

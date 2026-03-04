@@ -64,11 +64,26 @@ const getGalleries = async (query: Record<string, any>) => {
       [sortWith]: sortSequence,
     },
     include: {
-      gallery_items: true,
+      gallery_items: {
+        select: {
+          id: true,
+          file: true,
+        },
+      },
     },
   });
 
   const total = await prisma.gallery.count({ where: whereConditions });
+  const formattedResult = result.map((item) => ({
+    ...item,
+    gallery_items: item.gallery_items.map((galleryItem) => ({
+      id: galleryItem.id,
+      file_id: galleryItem.file.id,
+      name: galleryItem.file.name,
+      path: galleryItem.file.path,
+      alt_text: galleryItem.file.alt_text,
+    })),
+  }));
 
   return {
     meta: {
@@ -76,7 +91,7 @@ const getGalleries = async (query: Record<string, any>) => {
       limit: limitNumber,
       total,
     },
-    data: result,
+    data: formattedResult,
   };
 };
 

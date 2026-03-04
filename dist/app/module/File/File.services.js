@@ -25,6 +25,7 @@ const filesUpload = (req) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const files = req.files;
     const user = req.user;
+    console.log("files: ", files);
     if (!((_a = files === null || files === void 0 ? void 0 : files.files) === null || _a === void 0 ? void 0 : _a.length)) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "No file found");
     }

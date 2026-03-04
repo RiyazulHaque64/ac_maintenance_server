@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GalleryRoutes = void 0;
+const client_1 = require("@prisma/client");
+const express_1 = require("express");
+const auth_1 = __importDefault(require("../../middlewares/auth"));
+const validateRequest_1 = __importDefault(require("../../middlewares/validateRequest"));
+const common_1 = require("../../schema/common");
+const Gallery_controllers_1 = require("./Gallery.controllers");
+const Gallery_validations_1 = require("./Gallery.validations");
+const router = (0, express_1.Router)();
+router.post("/", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(Gallery_validations_1.GalleryValidations.createGalleryValidationSchema), Gallery_controllers_1.GalleryControllers.createGallery);
+router.post("/add-items", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(Gallery_validations_1.GalleryValidations.createGalleryItemsValidationSchema), Gallery_controllers_1.GalleryControllers.createGalleryItems);
+router.get("/", Gallery_controllers_1.GalleryControllers.getGalleries);
+router.delete("/delete-galleries", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(common_1.deleteValidationSchema), Gallery_controllers_1.GalleryControllers.deleteGallery);
+router.get("/:id", Gallery_controllers_1.GalleryControllers.getSingleGallery);
+router.patch("/:id", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(Gallery_validations_1.GalleryValidations.updateGalleryValidationSchema), Gallery_controllers_1.GalleryControllers.updateGallery);
+exports.GalleryRoutes = router;
