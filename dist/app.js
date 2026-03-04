@@ -11,20 +11,17 @@ const routes_1 = __importDefault(require("./app/routes"));
 const swagger_routes_1 = __importDefault(require("./app/routes/swagger.routes"));
 const config_1 = __importDefault(require("./app/config"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 // middlewares configuration
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
-app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "https://maintenance-client-smoky.vercel.app");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    if (req.method === "OPTIONS") {
-        return res.status(200).end();
-    }
-    next();
-});
+app.use((0, cors_1.default)({
+    origin: ["https://maintenanceqt.vercel.app", "http://localhost:3000"],
+    credentials: true,
+}));
+app.options("*", (0, cors_1.default)());
 // test server
 app.get("/", (req, res) => {
     res.status(http_status_1.default.OK).json({
@@ -40,3 +37,19 @@ app.use("/api-docs", swagger_routes_1.default);
 app.use(globalErrorHandler_1.default);
 app.use(notFoundHandler_1.default);
 exports.default = app;
+// app.use((req, res, next) => {
+//   res.setHeader(
+//     "Access-Control-Allow-Origin",
+//     "https://maintenanceqt.vercel.app",
+//   );
+//   // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+//   );
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   if (req.method === "OPTIONS") {
+//     return res.status(200).end();
+//   }
+//   next();
+// });

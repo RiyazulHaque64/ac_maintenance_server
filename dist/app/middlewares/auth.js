@@ -33,13 +33,16 @@ const auth = (...roles) => {
             catch (error) {
                 throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Session expired");
             }
-            const user = yield prisma_1.default.user.findUniqueOrThrow({
+            const user = yield prisma_1.default.user.findUnique({
                 where: {
                     id: verifiedUser === null || verifiedUser === void 0 ? void 0 : verifiedUser.id,
                     is_deleted: false,
                     status: client_1.UserStatus.ACTIVE,
                 },
             });
+            if (!user) {
+                throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "User not found");
+            }
             const passwordChangedTime = Math.floor(new Date(user.password_changed_at).getTime() / 1000);
             if (verifiedUser && passwordChangedTime > verifiedUser.iat) {
                 throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Password changed recently");
