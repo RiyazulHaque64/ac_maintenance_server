@@ -9,8 +9,6 @@ import { userSelectedFields } from "../User/User.constants";
 import { blogSearchableFields, blogSortableFields } from "./Blog.constants";
 import { IBlog } from "./Blog.interfaces";
 import { validDateChecker } from "../../utils/checker";
-import ApiError from "../../error/ApiError";
-import httpStatus from "http-status";
 
 const createPost = async (user: TAuthUser, data: IBlog) => {
   const tags = data?.tags?.filter((t) => uuidRegex.test(t)) || [];
@@ -345,7 +343,7 @@ const getRelatedPosts = async (slug: string) => {
       post.title
         .toLowerCase()
         .split(/\s+/)
-        .filter((word) => word && !PREPOSITIONS.has(word))
+        .filter((word) => word && !PREPOSITIONS.has(word)),
     ),
   ];
 
