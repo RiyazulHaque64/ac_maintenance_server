@@ -16,6 +16,7 @@ router.post("/", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.Use
 router.post("/add-items", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(Gallery_validations_1.GalleryValidations.createGalleryItemsValidationSchema), Gallery_controllers_1.GalleryControllers.createGalleryItems);
 router.get("/", Gallery_controllers_1.GalleryControllers.getGalleries);
 router.delete("/delete-galleries", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(common_1.deleteValidationSchema), Gallery_controllers_1.GalleryControllers.deleteGallery);
+router.delete("/delete-items", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(common_1.deleteValidationSchema), Gallery_controllers_1.GalleryControllers.deleteGalleryItems);
 router.get("/:id", Gallery_controllers_1.GalleryControllers.getSingleGallery);
 router.patch("/:id", (0, auth_1.default)(client_1.UserRole.SUPER_ADMIN, client_1.UserRole.ADMIN), (0, validateRequest_1.default)(Gallery_validations_1.GalleryValidations.updateGalleryValidationSchema), Gallery_controllers_1.GalleryControllers.updateGallery);
 exports.GalleryRoutes = router;

@@ -65,17 +65,29 @@ const getGalleries = (query) => __awaiter(void 0, void 0, void 0, function* () {
             [sortWith]: sortSequence,
         },
         include: {
-            gallery_items: true,
+            gallery_items: {
+                select: {
+                    id: true,
+                    file: true,
+                },
+            },
         },
     });
     const total = yield prisma_1.default.gallery.count({ where: whereConditions });
+    const formattedResult = result.map((item) => (Object.assign(Object.assign({}, item), { gallery_items: item.gallery_items.map((galleryItem) => ({
+            id: galleryItem.id,
+            file_id: galleryItem.file.id,
+            name: galleryItem.file.name,
+            path: galleryItem.file.path,
+            alt_text: galleryItem.file.alt_text,
+        })) })));
     return {
         meta: {
             page: pageNumber,
             limit: limitNumber,
             total,
         },
-        data: result,
+        data: formattedResult,
     };
 });
 const getSingleGallery = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -121,11 +133,25 @@ const createGalleryItems = (data) => __awaiter(void 0, void 0, void 0, function*
     });
     return result;
 });
+const deleteGalleryItems = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ids }) {
+    const result = yield prisma_1.default.galleryItem.deleteMany({
+        where: {
+            id: {
+                in: ids,
+            },
+        },
+    });
+    return {
+        deleted_count: result.count,
+        message: `${result.count} gallery items deleted successfully`,
+    };
+});
 exports.GalleryServices = {
     createGallery,
     getGalleries,
     getSingleGallery,
     updateGallery,
     deleteGalleries,
+    deleteGalleryItems,
     createGalleryItems,
 };
