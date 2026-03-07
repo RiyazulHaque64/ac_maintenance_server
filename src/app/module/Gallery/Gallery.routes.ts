@@ -31,6 +31,13 @@ router.delete(
   GalleryControllers.deleteGallery,
 );
 
+router.delete(
+  "/delete-items",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  validateRequest(deleteValidationSchema),
+  GalleryControllers.deleteGalleryItems,
+);
+
 router.get("/:id", GalleryControllers.getSingleGallery);
 
 router.patch(

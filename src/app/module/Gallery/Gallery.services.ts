@@ -145,11 +145,26 @@ const createGalleryItems = async (data: IGalleryItem) => {
   return result;
 };
 
+const deleteGalleryItems = async ({ ids }: { ids: string[] }) => {
+  const result = await prisma.galleryItem.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+  return {
+    deleted_count: result.count,
+    message: `${result.count} gallery items deleted successfully`,
+  };
+};
+
 export const GalleryServices = {
   createGallery,
   getGalleries,
   getSingleGallery,
   updateGallery,
   deleteGalleries,
+  deleteGalleryItems,
   createGalleryItems,
 };

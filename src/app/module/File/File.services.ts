@@ -19,8 +19,6 @@ const filesUpload = async (req: Request & { user?: TAuthUser }) => {
   const files = req.files as TFiles;
   const user = req.user as TAuthUser;
 
-  console.log("files: ", files);
-
   if (!files?.files?.length) {
     throw new ApiError(httpStatus.BAD_REQUEST, "No file found");
   }
@@ -153,26 +151,45 @@ const getFiles = async (query: Record<string, any>) => {
   };
 };
 
-const deleteFiles = async (payload: { paths: string[] }) => {
-  const { paths } = payload;
-  const updatedPaths = paths.map((path) => path.replace("/general/", ""));
+const deleteFiles = async (payload: { ids: string[] }) => {
+  const { ids } = payload;
+
+  const files = await prisma.file.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+    select: {
+      path: true,
+      bucket_id: true,
+    },
+  });
+
+  if (files.length === 0) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "No valid files found to delete",
+    );
+  }
+
+  const pathsToDelete = files.map((file) => file.path.replace("/general/", ""));
 
   const { data, error } = await supabase.storage
     .from("general")
-    .remove(updatedPaths);
+    .remove(pathsToDelete);
 
-  if ((error as any)?.status === 400 || data?.length === 0)
+  if (error) {
     throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "No valid file path found to delete",
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Failed to delete files from storage",
     );
-
-  const deletedFilesBucketId = data?.map((file) => file.id);
+  }
 
   const result = await prisma.file.deleteMany({
     where: {
-      bucket_id: {
-        in: deletedFilesBucketId,
+      id: {
+        in: ids,
       },
     },
   });
