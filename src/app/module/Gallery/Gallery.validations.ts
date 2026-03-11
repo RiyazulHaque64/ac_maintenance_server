@@ -44,8 +44,19 @@ const createGalleryItemsValidationSchema = z.object({
     .strict(),
 });
 
+const updateGalleryItemFeaturedValidationSchema = z.object({
+  body: z
+    .object({
+      featured: z.boolean({
+        invalid_type_error: "Featured must be a boolean",
+      }),
+    })
+    .strict(),
+});
+
 export const GalleryValidations = {
   createGalleryValidationSchema,
   updateGalleryValidationSchema,
   createGalleryItemsValidationSchema,
+  updateGalleryItemFeaturedValidationSchema,
 };

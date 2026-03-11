@@ -88,6 +88,20 @@ const deleteGalleryItems = catchAsync(
   },
 );
 
+const updateGalleryItemFeatured = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res, next) => {
+    const result = await GalleryServices.updateGalleryItemFeatured(
+      req.params.id,
+    );
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Gallery item featured status updated successfully",
+      data: result,
+    });
+  },
+);
+
 export const GalleryControllers = {
   createGallery,
   getGalleries,
@@ -96,4 +110,5 @@ export const GalleryControllers = {
   deleteGallery,
   deleteGalleryItems,
   createGalleryItems,
+  updateGalleryItemFeatured,
 };
