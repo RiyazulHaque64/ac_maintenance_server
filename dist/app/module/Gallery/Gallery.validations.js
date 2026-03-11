@@ -41,8 +41,18 @@ const createGalleryItemsValidationSchema = zod_1.z.object({
     })
         .strict(),
 });
+const updateGalleryItemFeaturedValidationSchema = zod_1.z.object({
+    body: zod_1.z
+        .object({
+        featured: zod_1.z.boolean({
+            invalid_type_error: "Featured must be a boolean",
+        }),
+    })
+        .strict(),
+});
 exports.GalleryValidations = {
     createGalleryValidationSchema,
     updateGalleryValidationSchema,
     createGalleryItemsValidationSchema,
+    updateGalleryItemFeaturedValidationSchema,
 };

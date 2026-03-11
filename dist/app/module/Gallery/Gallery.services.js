@@ -18,6 +18,7 @@ const prisma_1 = __importDefault(require("../../shared/prisma"));
 const fieldValidityChecker_1 = __importDefault(require("../../utils/fieldValidityChecker"));
 const pagination_1 = __importDefault(require("../../utils/pagination"));
 const Gallery_constants_1 = require("./Gallery.constants");
+const ApiError_1 = __importDefault(require("../../error/ApiError"));
 const createGallery = (data) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("data: ", data);
     const result = yield prisma_1.default.gallery.create({
@@ -26,7 +27,7 @@ const createGallery = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return result;
 });
 const getGalleries = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchTerm, page, limit, sortBy, sortOrder, id } = query;
+    const { searchTerm, page, limit, sortBy, sortOrder, id, featured } = query;
     if (sortBy) {
         (0, fieldValidityChecker_1.default)(Gallery_constants_1.gallerySortableFields, sortBy);
     }
@@ -54,6 +55,15 @@ const getGalleries = (query) => __awaiter(void 0, void 0, void 0, function* () {
             })),
         });
     }
+    if (featured) {
+        andConditions.push({
+            gallery_items: {
+                some: {
+                    featured: featured === "true",
+                },
+            },
+        });
+    }
     const whereConditions = {
         AND: andConditions,
     };
@@ -69,6 +79,7 @@ const getGalleries = (query) => __awaiter(void 0, void 0, void 0, function* () {
                 select: {
                     id: true,
                     file: true,
+                    featured: true,
                 },
             },
         },
@@ -80,6 +91,7 @@ const getGalleries = (query) => __awaiter(void 0, void 0, void 0, function* () {
             name: galleryItem.file.name,
             path: galleryItem.file.path,
             alt_text: galleryItem.file.alt_text,
+            featured: galleryItem.featured,
         })) })));
     return {
         meta: {
@@ -146,6 +158,25 @@ const deleteGalleryItems = (_a) => __awaiter(void 0, [_a], void 0, function* ({ 
         message: `${result.count} gallery items deleted successfully`,
     };
 });
+const updateGalleryItemFeatured = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const item = yield prisma_1.default.galleryItem.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!item) {
+        throw new ApiError_1.default(httpStatus.NOT_FOUND, "Gallery item not found");
+    }
+    const result = yield prisma_1.default.galleryItem.update({
+        where: {
+            id,
+        },
+        data: {
+            featured: !item.featured,
+        },
+    });
+    return result;
+});
 exports.GalleryServices = {
     createGallery,
     getGalleries,
@@ -154,4 +185,5 @@ exports.GalleryServices = {
     deleteGalleries,
     deleteGalleryItems,
     createGalleryItems,
+    updateGalleryItemFeatured,
 };

@@ -41,8 +41,6 @@ const filesUpload = async (req: Request & { user?: TAuthUser }) => {
           contentType: file.mimetype,
         });
 
-      console.log("data: ", file.mimetype, file.buffer);
-
       if (data?.id) {
         prepared_files.push({
           user_id: user.id,

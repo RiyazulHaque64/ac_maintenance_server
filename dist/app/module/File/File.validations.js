@@ -5,11 +5,11 @@ const zod_1 = require("zod");
 const deleteFilesValidationSchema = zod_1.z.object({
     body: zod_1.z
         .object({
-        paths: zod_1.z
-            .array(zod_1.z.string({ invalid_type_error: "Path should be a text" }), {
-            message: "Paths is required",
-        })
-            .min(1, { message: "Paths is required" }),
+        ids: zod_1.z
+            .array(zod_1.z
+            .string({ invalid_type_error: "Id should be a text" })
+            .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, "Invalid ID"))
+            .min(1, "Id is required"),
     })
         .strict(),
 });
