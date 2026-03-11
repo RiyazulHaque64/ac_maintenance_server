@@ -81,6 +81,15 @@ const deleteGalleryItems = (0, catchAsync_1.default)((req, res, next) => __await
         data: result,
     });
 }));
+const updateGalleryItemFeatured = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Gallery_services_1.GalleryServices.updateGalleryItemFeatured(req.params.id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Gallery item featured status updated successfully",
+        data: result,
+    });
+}));
 exports.GalleryControllers = {
     createGallery,
     getGalleries,
@@ -89,4 +98,5 @@ exports.GalleryControllers = {
     deleteGallery,
     deleteGalleryItems,
     createGalleryItems,
+    updateGalleryItemFeatured,
 };

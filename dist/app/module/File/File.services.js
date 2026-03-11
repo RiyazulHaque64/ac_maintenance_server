@@ -25,7 +25,6 @@ const filesUpload = (req) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const files = req.files;
     const user = req.user;
-    console.log("files: ", files);
     if (!((_a = files === null || files === void 0 ? void 0 : files.files) === null || _a === void 0 ? void 0 : _a.length)) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "No file found");
     }
@@ -139,18 +138,32 @@ const getFiles = (query) => __awaiter(void 0, void 0, void 0, function* () {
     };
 });
 const deleteFiles = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { paths } = payload;
-    const updatedPaths = paths.map((path) => path.replace("/general/", ""));
+    const { ids } = payload;
+    const files = yield prisma_1.default.file.findMany({
+        where: {
+            id: {
+                in: ids,
+            },
+        },
+        select: {
+            path: true,
+            bucket_id: true,
+        },
+    });
+    if (files.length === 0) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "No valid files found to delete");
+    }
+    const pathsToDelete = files.map((file) => file.path.replace("/general/", ""));
     const { data, error } = yield supabase_1.default.storage
         .from("general")
-        .remove(updatedPaths);
-    if ((error === null || error === void 0 ? void 0 : error.status) === 400 || (data === null || data === void 0 ? void 0 : data.length) === 0)
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, "No valid file path found to delete");
-    const deletedFilesBucketId = data === null || data === void 0 ? void 0 : data.map((file) => file.id);
+        .remove(pathsToDelete);
+    if (error) {
+        throw new ApiError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, "Failed to delete files from storage");
+    }
     const result = yield prisma_1.default.file.deleteMany({
         where: {
-            bucket_id: {
-                in: deletedFilesBucketId,
+            id: {
+                in: ids,
             },
         },
     });
