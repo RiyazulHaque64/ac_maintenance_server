@@ -19,7 +19,7 @@ const createGallery = async (data: IGallery) => {
 };
 
 const getGalleries = async (query: Record<string, any>) => {
-  const { searchTerm, page, limit, sortBy, sortOrder, id } = query;
+  const { searchTerm, page, limit, sortBy, sortOrder, id, featured } = query;
 
   if (sortBy) {
     fieldValidityChecker(gallerySortableFields, sortBy);
@@ -53,6 +53,16 @@ const getGalleries = async (query: Record<string, any>) => {
     });
   }
 
+  if (featured) {
+    andConditions.push({
+      gallery_items: {
+        some: {
+          featured: featured === "true",
+        },
+      },
+    });
+  }
+
   const whereConditions = {
     AND: andConditions,
   };
@@ -69,6 +79,7 @@ const getGalleries = async (query: Record<string, any>) => {
         select: {
           id: true,
           file: true,
+          featured: true,
         },
       },
     },
@@ -83,6 +94,7 @@ const getGalleries = async (query: Record<string, any>) => {
       name: galleryItem.file.name,
       path: galleryItem.file.path,
       alt_text: galleryItem.file.alt_text,
+      featured: galleryItem.featured,
     })),
   }));
 
