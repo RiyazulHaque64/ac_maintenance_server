@@ -79,6 +79,7 @@ model GalleryItem {
   id         String   @id @default(uuid())
   gallery_id String
   file_id    String
+  featured   Boolean  @default(false)
   created_at DateTime @default(now())
 
   gallery Gallery @relation(fields: [gallery_id], references: [id], onDelete: Cascade)

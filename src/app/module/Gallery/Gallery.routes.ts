@@ -47,4 +47,10 @@ router.patch(
   GalleryControllers.updateGallery,
 );
 
+router.patch(
+  "/featured-item/:id",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  GalleryControllers.updateGalleryItemFeatured,
+);
+
 export const GalleryRoutes = router;

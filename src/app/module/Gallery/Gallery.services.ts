@@ -8,6 +8,7 @@ import {
   gallerySortableFields,
 } from "./Gallery.constants";
 import { IGallery, IGalleryItem } from "./Gallery.interface";
+import ApiError from "../../error/ApiError";
 
 const createGallery = async (data: IGallery) => {
   console.log("data: ", data);
@@ -159,6 +160,28 @@ const deleteGalleryItems = async ({ ids }: { ids: string[] }) => {
   };
 };
 
+const updateGalleryItemFeatured = async (id: string) => {
+  const item = await prisma.galleryItem.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!item) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Gallery item not found");
+  }
+
+  const result = await prisma.galleryItem.update({
+    where: {
+      id,
+    },
+    data: {
+      featured: !item.featured,
+    },
+  });
+  return result;
+};
+
 export const GalleryServices = {
   createGallery,
   getGalleries,
@@ -167,4 +190,5 @@ export const GalleryServices = {
   deleteGalleries,
   deleteGalleryItems,
   createGalleryItems,
+  updateGalleryItemFeatured,
 };
