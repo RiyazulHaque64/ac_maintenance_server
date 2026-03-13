@@ -95,10 +95,10 @@ const getServices = async (query: Record<string, any>) => {
   };
 };
 
-const getSingleService = async (id: string) => {
+const getSingleService = async (slug: string) => {
   const result = await prisma.service.findUniqueOrThrow({
     where: {
-      id,
+      slug,
     },
   });
   return result;

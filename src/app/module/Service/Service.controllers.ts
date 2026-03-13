@@ -14,7 +14,7 @@ const createService = catchAsync(
       message: "Service created successfully",
       data: result,
     });
-  }
+  },
 );
 
 const getServices = catchAsync(
@@ -27,11 +27,11 @@ const getServices = catchAsync(
       meta: result.meta,
       data: result.data,
     });
-  }
+  },
 );
 
 const getSingleService = catchAsync(async (req, res, next) => {
-  const result = await ServiceServices.getSingleService(req.params.id);
+  const result = await ServiceServices.getSingleService(req.params.slug);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -49,7 +49,7 @@ const updateService = catchAsync(
       message: "Service updated successfully",
       data: result,
     });
-  }
+  },
 );
 
 const deleteService = catchAsync(
@@ -61,7 +61,7 @@ const deleteService = catchAsync(
       message: "Service deleted successfully",
       data: result,
     });
-  }
+  },
 );
 
 export const ServiceControllers = {

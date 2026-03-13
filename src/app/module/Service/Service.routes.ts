@@ -12,7 +12,7 @@ router.post(
   "/",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   validateRequest(ServiceValidations.createServiceValidationSchema),
-  ServiceControllers.createService
+  ServiceControllers.createService,
 );
 
 router.get("/", ServiceControllers.getServices);
@@ -21,16 +21,16 @@ router.delete(
   "/delete-services",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   validateRequest(deleteValidationSchema),
-  ServiceControllers.deleteService
+  ServiceControllers.deleteService,
 );
 
-router.get("/:id", ServiceControllers.getSingleService);
+router.get("/:slug", ServiceControllers.getSingleService);
 
 router.patch(
   "/:id",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   validateRequest(ServiceValidations.updateServiceValidationSchema),
-  ServiceControllers.updateService
+  ServiceControllers.updateService,
 );
 
 export const ServiceRoutes = router;
