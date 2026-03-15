@@ -1,4 +1,3 @@
-import { UserRole, UserStatus } from "@prisma/client";
 import config from "../../config";
 import prisma from "../../shared/prisma";
 import {
@@ -16,45 +15,9 @@ import httpStatus from "http-status";
 import { userSelectedFields } from "../User/User.constants";
 import { OTPGenerator, verifyOTP } from "../../utils/otp";
 import sendEmail from "../../utils/sendEmail";
-import { Request } from "express";
+import { UserStatus } from "../../../generated/prisma/enums";
 
-const createUser = async (req: Request) => {
-  const data: TCreateUserPayload = req.body;
-  const token = req.headers.authorization;
-
-  const hashedPassword = await bcrypt.hash(
-    data.password,
-    Number(config.salt_rounds)
-  );
-
-  const new_user: TNewUser = {
-    name: data.name,
-    email: data.email,
-    password: hashedPassword,
-    contact_number: data.contact_number || null,
-    role: "USER",
-  };
-
-  if (token) {
-    const verifiedUser = verifyToken(token, config.jwt_access_secret);
-    if (
-      (verifiedUser.role === "ADMIN" || verifiedUser.role === "SUPER_ADMIN") &&
-      data.role
-    ) {
-      new_user.role = data.role;
-    }
-  }
-
-  const result = await prisma.user.create({
-    data: new_user,
-    select: {
-      ...userSelectedFields,
-    },
-  });
-
-  return result;
-};
-
+// ------------------------------------- LOGIN -------------------------------------
 const login = async (credential: TLoginCredential) => {
   const { email, password } = credential;
 
@@ -75,7 +38,7 @@ const login = async (credential: TLoginCredential) => {
   }
 
   const passwordChangedTime = Math.floor(
-    new Date(user.password_changed_at).getTime() / 1000
+    new Date(user.password_changed_at).getTime() / 1000,
   );
 
   const jwtPayload = {
@@ -88,7 +51,7 @@ const login = async (credential: TLoginCredential) => {
   const accessToken = generateToken(
     jwtPayload,
     config.jwt_access_secret,
-    config.jwt_access_expires_in
+    config.jwt_access_expires_in,
   );
 
   return {
@@ -104,7 +67,7 @@ const login = async (credential: TLoginCredential) => {
 
 const resetPassword = async (
   user: TAuthUser | undefined,
-  payload: TResetPasswordPayload
+  payload: TResetPasswordPayload,
 ) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
@@ -114,14 +77,14 @@ const resetPassword = async (
 
   const checkPassword = await bcrypt.compare(
     payload.old_password,
-    userInfo.password
+    userInfo.password,
   );
   if (!checkPassword) {
     throw new ApiError(httpStatus.FORBIDDEN, "Old password is invalid");
   }
   const hashedPassword = await bcrypt.hash(
     payload.new_password,
-    Number(config.salt_rounds)
+    Number(config.salt_rounds),
   );
 
   const result = await prisma.user.update({
@@ -139,7 +102,7 @@ const resetPassword = async (
   });
 
   const passwordChangedTime = Math.floor(
-    new Date(result.password_changed_at).getTime() / 1000
+    new Date(result.password_changed_at).getTime() / 1000,
   );
 
   const jwtPayload = {
@@ -152,7 +115,7 @@ const resetPassword = async (
   const accessToken = generateToken(
     jwtPayload,
     config.jwt_access_secret,
-    config.jwt_access_expires_in
+    config.jwt_access_expires_in,
   );
 
   return {
@@ -183,7 +146,7 @@ const forgotPassword = async (payload: TForgotPasswordPayload) => {
 
     const hashedPassword = await bcrypt.hash(
       new_password,
-      Number(config.salt_rounds)
+      Number(config.salt_rounds),
     );
 
     const result = await prisma.user.update({
@@ -255,7 +218,6 @@ const forgotPassword = async (payload: TForgotPasswordPayload) => {
 };
 
 export const AuthServices = {
-  createUser,
   login,
   resetPassword,
   forgotPassword,

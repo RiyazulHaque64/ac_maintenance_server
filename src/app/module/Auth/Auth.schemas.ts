@@ -1,32 +1,4 @@
-import { UserRole } from "@prisma/client";
 import { z } from "zod";
-
-const createUserValidationSchema = z.object({
-  body: z
-    .object({
-      name: z
-        .string({ invalid_type_error: "Name should be a text" })
-        .min(1, { message: "Name must be at least 1 characters long" })
-        .max(100, {
-          message: "Name must be at most 50 characters long",
-        }),
-      email: z.string().email({ message: "Invalid email address" }),
-      password: z
-        .string({
-          invalid_type_error: "Password should be a text",
-          required_error: "Password is required",
-        })
-        .min(6, { message: "Password must be at least 6 characters long" })
-        .regex(/^(?=.*[a-zA-Z])(?=.*\d)/, {
-          message: "Password must contain at least one letter and one number",
-        }),
-      contact_number: z
-        .string({ invalid_type_error: "Contact number should be a text" })
-        .optional(),
-      role: z.enum(Object.values(UserRole) as [string, ...string[]]).optional(),
-    })
-    .strict(),
-});
 
 const loginUserValidationSchema = z.object({
   body: z
@@ -88,7 +60,6 @@ const forgotPasswordValidationSchema = z.object({
 });
 
 export const AuthValidations = {
-  createUserValidationSchema,
   loginUserValidationSchema,
   resetPasswordValidationSchema,
   forgotPasswordValidationSchema,

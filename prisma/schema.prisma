@@ -1,16 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -42,11 +36,10 @@ model Blog {
   author_id  String
   published  Boolean  @default(true)
   featured   Boolean  @default(false)
+  tags       String[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  tags   Tag[] @relation("BlogTag")
-  author User  @relation(fields: [author_id], references: [id])
+  author     User     @relation(fields: [author_id], references: [id])
 
   @@map("blogs")
 }
@@ -116,39 +109,6 @@ model OTP {
   created_at DateTime @default(now())
 
   @@map("otp")
-}
-
-model FeatureGroup {
-  id         String    @id @default(uuid())
-  name       String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  feature    Feature[]
-
-  @@map("feature_groups")
-}
-
-model Feature {
-  id               String   @id @default(uuid())
-  name             String
-  feature_group_id String
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
-
-  feature_group FeatureGroup @relation(fields: [feature_group_id], references: [id])
-
-  @@map("features")
-}
-
-model Tag {
-  id         String   @id @default(uuid())
-  name       String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  blogs Blog[] @relation("BlogTag")
-
-  @@map("tags")
 }
 
 enum UserStatus {

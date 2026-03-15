@@ -5,16 +5,6 @@ import { AuthServices } from "./Auth.services";
 import httpStatus from "http-status";
 import { TAuthUser } from "../../interfaces/common";
 
-const createUser = catchAsync(async (req, res, next) => {
-  const result = await AuthServices.createUser(req);
-  sendResponse(res, {
-    statusCode: httpStatus.CREATED,
-    success: true,
-    message: "User created successfully",
-    data: result,
-  });
-});
-
 const login = catchAsync(async (req, res, next) => {
   const { token, ...result } = await AuthServices.login(req.body);
   const maxAge = 60 * 24 * 60 * 60 * 1000;
@@ -79,7 +69,6 @@ const logout = catchAsync(async (req, res, next) => {
 });
 
 export const AuthControllers = {
-  createUser,
   login,
   resetPassword,
   forgotPassword,
