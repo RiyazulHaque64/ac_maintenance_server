@@ -5,6 +5,7 @@ import { AuthServices } from "./Auth.services";
 import httpStatus from "http-status";
 import { TAuthUser } from "../../interfaces/common";
 
+// ------------------------------------- LOGIN -------------------------------------
 const login = catchAsync(async (req, res, next) => {
   const { token, ...result } = await AuthServices.login(req.body);
   const maxAge = 60 * 24 * 60 * 60 * 1000;
@@ -20,6 +21,7 @@ const login = catchAsync(async (req, res, next) => {
   });
 });
 
+// ------------------------------------- RESET PASSWORD ----------------------------
 const resetPassword = catchAsync(
   async (req: Request & { user?: TAuthUser }, res, next) => {
     const { token, ...rest } = await AuthServices.resetPassword(
@@ -42,6 +44,7 @@ const resetPassword = catchAsync(
   },
 );
 
+// ------------------------------------- FORGOT PASSWORD ---------------------------
 const forgotPassword = catchAsync(async (req, res, next) => {
   const result = await AuthServices.forgotPassword(req.body);
   sendResponse(res, {

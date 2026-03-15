@@ -1,54 +1,51 @@
 import { z } from "zod";
 
-const loginUserValidationSchema = z.object({
+// ------------------------------------- LOGIN -------------------------------------
+const login = z.object({
   body: z
     .object({
-      email: z
-        .string({ required_error: "Email is required" })
-        .email({ message: "Invalid email address" }),
+      email: z.email({ message: "Invalid email" }),
       password: z
         .string({
-          invalid_type_error: "Password should be a text",
-          required_error: "Password is required",
+          error: "Password should be a text",
         })
-        .min(1, { message: "Password must be required" }),
+        .min(6, { message: "Password must be at least 6 characters long" })
+        .regex(/^(?=.*[a-zA-Z])(?=.*\d)/, {
+          message: "Password must contain at least one letter and one number",
+        }),
     })
     .strict(),
 });
 
-const resetPasswordValidationSchema = z.object({
+// ------------------------------------- RESET PASSWORD ----------------------------
+const resetPassword = z.object({
   body: z.object({
     old_password: z
       .string({
-        invalid_type_error: "Old password should be a text",
-        required_error: "Old password is required",
+        error: "Old password should be a text",
       })
       .min(1, { message: "Old password must be required" }),
     new_password: z
       .string({
-        invalid_type_error: "New password should be a text",
-        required_error: "New password is required",
+        error: "New password should be a text",
       })
       .min(1, { message: "New password must be required" }),
   }),
 });
 
-const forgotPasswordValidationSchema = z.object({
+// ------------------------------------- FORGOT PASSWORD ---------------------------
+const forgotPassword = z.object({
   body: z
     .object({
-      email: z
-        .string({ required_error: "Email is required" })
-        .email({ message: "Invalid email address" }),
+      email: z.email({ message: "Invalid email" }),
       otp: z
         .number({
-          invalid_type_error: "OTP should be a number",
-          required_error: "OTP is required",
+          error: "OTP should be a number",
         })
         .optional(),
       new_password: z
         .string({
-          invalid_type_error: "Password should be a text",
-          required_error: "Password is required",
+          error: "Password should be a text",
         })
         .min(6, { message: "Password must be at least 6 characters long" })
         .regex(/^(?=.*[a-zA-Z])(?=.*\d)/, {
@@ -59,8 +56,8 @@ const forgotPasswordValidationSchema = z.object({
     .strict(),
 });
 
-export const AuthValidations = {
-  loginUserValidationSchema,
-  resetPasswordValidationSchema,
-  forgotPasswordValidationSchema,
+export const AuthSchemas = {
+  login,
+  resetPassword,
+  forgotPassword,
 };

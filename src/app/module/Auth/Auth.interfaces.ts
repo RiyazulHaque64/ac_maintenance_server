@@ -1,33 +1,11 @@
 import { UserRole } from "@prisma/client";
+import z from "zod";
+import { AuthSchemas } from "./Auth.schemas";
 
-export type TCreateUserPayload = {
-  name: string;
-  email: string;
-  password: string;
-  contact_number: string;
-  role?: "USER" | "ADMIN";
-};
-
-export type TNewUser = {
-  name: string;
-  email: string;
-  password: string;
-  contact_number: string | null;
-  role: UserRole;
-};
-
-export type TLoginCredential = {
-  email: string;
-  password: string;
-};
-
-export type TResetPasswordPayload = {
-  old_password: string;
-  new_password: string;
-};
-
-export type TForgotPasswordPayload = {
-  email: string;
-  new_password?: string;
-  otp?: number;
-};
+export type LoginPayload = z.infer<typeof AuthSchemas.login>["body"];
+export type ResetPasswordPayload = z.infer<
+  typeof AuthSchemas.resetPassword
+>["body"];
+export type ForgotPasswordPayload = z.infer<
+  typeof AuthSchemas.forgotPassword
+>["body"];

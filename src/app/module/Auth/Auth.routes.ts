@@ -2,27 +2,27 @@ import { Router } from "express";
 import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
 import { AuthControllers } from "./Auth.controllers";
-import { AuthValidations } from "./Auth.schemas";
 import { UserRole } from "../../../generated/prisma/enums";
+import { AuthSchemas } from "./Auth.schemas";
 
 const router = Router();
 
 router.post(
   "/login",
-  validateRequest(AuthValidations.loginUserValidationSchema),
+  validateRequest(AuthSchemas.login),
   AuthControllers.login,
 );
 
 router.post(
   "/reset-password",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER),
-  validateRequest(AuthValidations.resetPasswordValidationSchema),
+  validateRequest(AuthSchemas.resetPassword),
   AuthControllers.resetPassword,
 );
 
 router.post(
   "/forgot-password",
-  validateRequest(AuthValidations.forgotPasswordValidationSchema),
+  validateRequest(AuthSchemas.forgotPassword),
   AuthControllers.forgotPassword,
 );
 

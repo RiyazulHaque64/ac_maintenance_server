@@ -1,11 +1,9 @@
 import config from "../../config";
 import prisma from "../../shared/prisma";
 import {
-  TCreateUserPayload,
-  TForgotPasswordPayload,
-  TLoginCredential,
-  TNewUser,
-  TResetPasswordPayload,
+  ForgotPasswordPayload,
+  LoginPayload,
+  ResetPasswordPayload,
 } from "./Auth.interfaces";
 import bcrypt from "bcrypt";
 import ApiError from "../../error/ApiError";
@@ -18,7 +16,7 @@ import sendEmail from "../../utils/sendEmail";
 import { UserStatus } from "../../../generated/prisma/enums";
 
 // ------------------------------------- LOGIN -------------------------------------
-const login = async (credential: TLoginCredential) => {
+const login = async (credential: LoginPayload) => {
   const { email, password } = credential;
 
   const user = await prisma.user.findUnique({
@@ -65,9 +63,10 @@ const login = async (credential: TLoginCredential) => {
   };
 };
 
+// ------------------------------------- RESET PASSWORD ----------------------------
 const resetPassword = async (
   user: TAuthUser | undefined,
-  payload: TResetPasswordPayload,
+  payload: ResetPasswordPayload,
 ) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
@@ -129,7 +128,8 @@ const resetPassword = async (
   };
 };
 
-const forgotPassword = async (payload: TForgotPasswordPayload) => {
+// ------------------------------------- FORGOT PASSWORD ---------------------------
+const forgotPassword = async (payload: ForgotPasswordPayload) => {
   const { email, new_password, otp } = payload;
   if (new_password && otp) {
     const storedOTP = await prisma.oTP.findFirst({
